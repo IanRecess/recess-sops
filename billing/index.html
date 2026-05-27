@@ -258,6 +258,9 @@
   }
   .dot.active { background: var(--teal); transform: scale(1.4); }
   .dot:hover { background: var(--teal-dark); }
+  .dot.final-dot { background: #A7F3D0; }
+  .dot.final-dot.active { background: #047857; }
+  .dot.final-dot:hover { background: #059669; }
 
   @media (max-width: 700px) {
     .slide { padding: 60px 32px 110px; }
@@ -309,6 +312,37 @@
 
   .step-num.optional {
     background: #94A3B8;
+  }
+  .step-num.final-pill {
+    background: #047857;
+  }
+
+  /* final-slide sheet embed */
+  .slide.final-slide {
+    padding: 40px 32px 100px;
+  }
+  .sheet-embed-wrap {
+    width: min(1100px, 94vw);
+    margin: 18px 0 20px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(15, 28, 46, 0.12), 0 2px 6px rgba(15, 28, 46, 0.08);
+    background: white;
+    border: 1px solid #E5E7EB;
+  }
+  .sheet-embed {
+    width: 100%;
+    height: min(540px, 56vh);
+    display: block;
+    border: 0;
+  }
+  .sheet-caption {
+    background: #F8FAFC;
+    border-top: 1px solid #E5E7EB;
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--muted);
+    text-align: left;
   }
   .optional-pill {
     display: inline-block;
@@ -772,6 +806,29 @@
     </div>
   </section>
 
+  <!-- ─── FINAL — Live view of the destination sheet ─────────────── -->
+  <section class="slide final-slide" id="slide-final">
+    <span class="step-num final-pill">Done</span>
+    <h2>Here's where your data lands</h2>
+    <p class="body" style="max-width: 700px;">
+      This is the live <strong>Vendor Onboarding Forms &amp; W9s</strong> sheet. Your row appears here after submit. Accounting works directly off this — it's the source of truth.
+    </p>
+
+    <div class="sheet-embed-wrap">
+      <iframe class="sheet-embed"
+              src="https://docs.google.com/spreadsheets/d/1VK3noKtVc3QnRgoB6Xf_n9cnAk8qlSVjX2hsmEBTnms/edit?gid=943420630&amp;widget=true&amp;headers=true&amp;rm=minimal"
+              loading="lazy"
+              title="Vendor Onboarding Forms & W9s — live view"></iframe>
+      <div class="sheet-caption">
+        Live · Tab: "1) Vendor Onboarding Forms &amp; W9s" · You need Drive access to see the contents
+      </div>
+    </div>
+
+    <a class="btn-link" href="https://docs.google.com/spreadsheets/d/1VK3noKtVc3QnRgoB6Xf_n9cnAk8qlSVjX2hsmEBTnms/edit?gid=943420630#gid=943420630" target="_blank">
+      Open the sheet in a new tab
+    </a>
+  </section>
+
 </div>
 
 <button class="nav-arrow left disabled" id="navLeft" onclick="navStep(-1)">‹</button>
@@ -791,6 +848,7 @@
   <span class="dot" data-i="8" onclick="goTo(8)"></span>
   <span class="dot" data-i="9" onclick="goTo(9)"></span>
   <span class="dot" data-i="10" onclick="goTo(10)"></span>
+  <span class="dot final-dot" data-i="11" onclick="goTo(11)" title="Done — view the live sheet"></span>
 </div>
 
 <script>
@@ -798,7 +856,7 @@
   const navLeft = document.getElementById('navLeft');
   const navRight = document.getElementById('navRight');
   const progText = document.getElementById('progressText');
-  const LABELS = ['Start', 'Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7', 'Step 8', 'Step 9', 'Step 10'];
+  const LABELS = ['Start', 'Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7', 'Step 8', 'Step 9', 'Step 10', 'Done'];
 
   // ─── Form data capture ──────────────────────────
   // Stored client-side + localStorage so reload doesn't nuke progress.
