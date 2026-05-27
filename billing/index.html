@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Submit Billing Info — Supply</title>
+<style>
+  :root {
+    --teal: #13BAD5;
+    --teal-dark: #0A9AB5;
+    --ink: #0F1C2E;
+    --muted: #5A6675;
+    --bg: #F4F8FB;
+    --card-bg: #FFFFFF;
+    --tip-bg: #E6F7F4;
+    --tip-border: #14B8A6;
+    --note-bg: #EBF4FE;
+    --note-border: #3B82F6;
+    --warn-bg: #FFF4E5;
+    --warn-border: #F59E0B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased;
+  }
+
+  /* deck */
+  .deck {
+    display: flex; height: 100vh;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  }
+  .deck::-webkit-scrollbar { display: none; }
+  .slide {
+    flex: 0 0 100vw; height: 100vh;
+    scroll-snap-align: start;
+    padding: 60px 80px 100px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+  }
+
+  /* hero */
+  .slide.hero {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+    color: white;
+  }
+  .slide.hero .label {
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    opacity: 0.85; margin-bottom: 16px;
+  }
+  .slide.hero h1 {
+    font-size: clamp(40px, 6vw, 78px);
+    font-weight: 800; line-height: 1.05;
+    margin-bottom: 24px; max-width: 900px;
+  }
+  .slide.hero p.purpose {
+    font-size: clamp(17px, 1.8vw, 22px);
+    max-width: 720px; opacity: 0.95;
+    margin-bottom: 40px; line-height: 1.5;
+  }
+  .start-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: white; color: var(--teal-dark);
+    padding: 18px 36px; border-radius: 999px;
+    font-size: 18px; font-weight: 700; text-decoration: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transition: transform 0.15s;
+  }
+  .start-btn:hover { transform: translateY(-2px); }
+  .start-btn::after { content: "→"; font-size: 22px; }
+
+  /* resume-from-draft banner (only shown on cover when localStorage has a draft) */
+  .resume-banner {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 10px 14px 10px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    margin-top: 24px;
+    color: white;
+    backdrop-filter: blur(6px);
+  }
+  .resume-banner.shown { display: inline-flex; }
+  .resume-banner .resume-icon { font-size: 16px; }
+  .resume-clear {
+    background: rgba(255,255,255,0.25);
+    color: white; border: none;
+    padding: 6px 12px; border-radius: 999px;
+    font-size: 12px; font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .resume-clear:hover { background: rgba(255,255,255,0.45); }
+
+  /* tiny auto-save indicator that lives in the progress bar */
+  .autosave-tag {
+    font-size: 11px;
+    color: var(--muted);
+    margin-left: 12px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .autosave-tag.shown { opacity: 1; }
+
+  /* steps */
+  .step-num {
+    display: inline-block; background: var(--teal); color: white;
+    font-weight: 800; font-size: 13px;
+    letter-spacing: 0.12em;
+    padding: 7px 18px; border-radius: 999px;
+    margin-bottom: 28px; text-transform: uppercase;
+  }
+  .slide h2 {
+    font-size: clamp(34px, 4.8vw, 60px);
+    font-weight: 800; line-height: 1.1;
+    margin-bottom: 24px; max-width: 950px;
+  }
+  .slide .body {
+    font-size: clamp(17px, 1.5vw, 20px);
+    color: var(--muted);
+    margin-bottom: 28px; max-width: 680px; line-height: 1.5;
+  }
+
+  .btn-link {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--teal); color: white;
+    padding: 18px 36px; border-radius: 12px;
+    font-size: 18px; font-weight: 700; text-decoration: none;
+    box-shadow: 0 6px 20px rgba(19,186,213,0.25);
+    transition: transform 0.15s, background 0.15s;
+    margin-bottom: 8px;
+  }
+  .btn-link:hover { background: var(--teal-dark); transform: translateY(-1px); }
+  .btn-link::after { content: "↗"; font-size: 20px; }
+
+  .callout {
+    border-left: 6px solid; padding: 18px 24px;
+    border-radius: 10px; font-size: 16px;
+    max-width: 640px; text-align: left;
+    margin-top: 18px;
+  }
+  .callout .label-bold { font-weight: 800; margin-right: 6px; }
+  .tip  { background: var(--tip-bg);  border-color: var(--tip-border);  color: #115E59; }
+  .note { background: var(--note-bg); border-color: var(--note-border); color: #1E40AF; }
+  .warn { background: var(--warn-bg); border-color: var(--warn-border); color: #92400E; }
+
+  /* branches */
+  .branch { display: flex; gap: 28px; margin-top: 30px; max-width: 880px; width: 100%; }
+  .branch-card {
+    flex: 1; border: 3px solid; border-radius: 14px;
+    padding: 24px; text-align: left; background: white;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+  }
+  .branch-card.yes { border-color: var(--tip-border); }
+  .branch-card.no  { border-color: var(--warn-border); }
+  .branch-condition {
+    font-weight: 800; font-size: 14px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+  .branch-card.yes .branch-condition { color: #047857; }
+  .branch-card.no .branch-condition  { color: #B45309; }
+  .branch-then { font-size: 17px; color: var(--ink); line-height: 1.5; }
+  .branch-then ul { margin: 8px 0 0 18px; padding: 0; }
+  .branch-then li { margin-bottom: 4px; }
+
+  /* alignment-rule (= match) */
+  .match-row {
+    display: flex; align-items: stretch; gap: 18px;
+    max-width: 1100px; width: 100%;
+    margin-top: 24px;
+  }
+  .match-side {
+    flex: 1; background: white;
+    border: 3px solid var(--teal);
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(19,186,213,0.10);
+  }
+  .match-side .where {
+    font-size: 13px; font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.10em; text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .match-side .field {
+    font-size: 22px; font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .match-side .sample {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 15px;
+    background: #F1F5F9;
+    color: var(--ink);
+    padding: 8px 14px;
+    border-radius: 8px;
+    display: inline-block;
+    margin-top: 6px;
+  }
+  .match-equals {
+    display: flex; align-items: center;
+    font-size: 60px; font-weight: 800;
+    color: var(--teal);
+    line-height: 1;
+  }
+  @media (max-width: 700px) {
+    .match-row { flex-direction: column; }
+    .match-equals { transform: rotate(90deg); }
+  }
+
+  /* final */
+  .slide.final {
+    background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+    color: white;
+  }
+  .slide.final h2 { color: white; }
+  .slide.final .body { color: rgba(255,255,255,0.95); }
+
+  /* nav */
+  .nav-arrow {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    width: 64px; height: 64px; background: white;
+    border-radius: 50%; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 32px; font-weight: 700;
+    color: var(--teal-dark); transition: transform 0.15s, opacity 0.15s;
+    z-index: 100; border: none;
+  }
+  .nav-arrow:hover { transform: translateY(-50%) scale(1.08); }
+  .nav-arrow.disabled { opacity: 0.25; cursor: default; }
+  .nav-arrow.left  { left: 24px; }
+  .nav-arrow.right { right: 24px; }
+
+  .progress {
+    position: fixed; bottom: 32px;
+    left: 50%; transform: translateX(-50%);
+    display: flex; gap: 10px; align-items: center;
+    background: white; padding: 12px 22px;
+    border-radius: 999px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    z-index: 100;
+  }
+  .progress-text {
+    font-size: 13px; font-weight: 700;
+    color: var(--muted); margin-right: 6px;
+  }
+  .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #E5E7EB; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .dot.active { background: var(--teal); transform: scale(1.4); }
+  .dot:hover { background: var(--teal-dark); }
+
+  @media (max-width: 700px) {
+    .slide { padding: 60px 32px 110px; }
+    .nav-arrow { width: 48px; height: 48px; font-size: 24px; }
+    .nav-arrow.left { left: 12px; } .nav-arrow.right { right: 12px; }
+    .branch { flex-direction: column; }
+  }
+
+  /* ─── form input field ──────────────────── */
+  .input-block { width: 100%; max-width: 540px; margin-top: 12px; }
+  .input-label {
+    display: block;
+    font-size: 13px; font-weight: 800;
+    color: var(--muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  .sop-input {
+    width: 100%;
+    padding: 18px 22px;
+    font-size: 22px;
+    font-family: inherit;
+    color: var(--ink);
+    border: 3px solid #E5E7EB;
+    border-radius: 14px;
+    background: white;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+    text-align: center;
+  }
+  .sop-input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 4px rgba(19,186,213,0.15);
+  }
+  .sop-input::placeholder { color: #94A3B8; }
+  .input-helper {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
+    text-align: left;
+    display: flex; justify-content: space-between;
+  }
+  .saved-tick {
+    color: #047857; font-weight: 700;
+    opacity: 0; transition: opacity 0.2s;
+  }
+  .saved-tick.shown { opacity: 1; }
+
+  .step-num.optional {
+    background: #94A3B8;
+  }
+  .optional-pill {
+    display: inline-block;
+    background: #E5E7EB;
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.10em;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-left: 8px;
+    text-transform: uppercase;
+    vertical-align: middle;
+  }
+
+  /* ─── selectable choice cards ─────────── */
+  .choice-row {
+    display: flex; gap: 24px;
+    max-width: 900px; width: 100%;
+    margin-top: 12px;
+  }
+  .choice-card {
+    flex: 1;
+    background: white;
+    border: 3px solid #E5E7EB;
+    border-radius: 16px;
+    padding: 28px 24px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .choice-card:hover {
+    border-color: var(--teal);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(19,186,213,0.10);
+  }
+  .choice-card.selected {
+    border-color: var(--teal);
+    background: var(--tip-bg);
+    box-shadow: 0 8px 24px rgba(19,186,213,0.20);
+  }
+  .choice-card.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 12px; right: 16px;
+    background: var(--teal);
+    color: white;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 16px;
+  }
+  .choice-title {
+    font-size: 22px; font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  .choice-desc {
+    font-size: 15px; color: var(--muted);
+    line-height: 1.5;
+  }
+
+  /* expandable section that appears on selection */
+  .reveal {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s ease;
+    width: 100%; max-width: 600px;
+  }
+  .reveal.shown { max-height: 600px; margin-top: 28px; }
+
+  .sop-textarea {
+    width: 100%;
+    padding: 16px 20px;
+    font-size: 16px;
+    font-family: inherit;
+    color: var(--ink);
+    border: 3px solid #E5E7EB;
+    border-radius: 14px;
+    background: white;
+    outline: none;
+    resize: vertical;
+    min-height: 110px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .sop-textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 4px rgba(19,186,213,0.15);
+  }
+
+  @media (max-width: 700px) {
+    .choice-row { flex-direction: column; }
+  }
+
+  /* ─── File upload zone (single, multi-file) ─── */
+  .upload-zone {
+    width: 100%; max-width: 720px;
+    background: white;
+    border: 3px dashed #CBD5E1;
+    border-radius: 16px;
+    padding: 42px 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 8px;
+  }
+  .upload-zone:hover { border-color: var(--teal); background: #F0FDFA; }
+  .upload-zone.dragover { border-color: var(--teal); background: var(--tip-bg); border-style: solid; }
+  .upload-zone.has-file { border-color: var(--tip-border); background: var(--tip-bg); border-style: solid; }
+  .upload-zone input[type="file"] { display: none; }
+  .upload-icon { font-size: 48px; margin-bottom: 14px; }
+  .upload-label {
+    font-size: 18px; font-weight: 700;
+    color: var(--ink); margin-bottom: 4px;
+  }
+  .upload-hint { font-size: 13px; color: var(--muted); }
+  .file-list {
+    margin-top: 18px;
+    text-align: left;
+    background: white;
+    border-radius: 10px;
+    padding: 0;
+    list-style: none;
+  }
+  .file-list li {
+    font-family: ui-monospace, monospace;
+    font-size: 14px;
+    color: #115E59;
+    padding: 6px 0;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .file-list .remove-file {
+    margin-left: auto;
+    background: none; border: none;
+    color: #94A3B8; cursor: pointer;
+    font-size: 18px; padding: 0 6px;
+  }
+  .file-list .remove-file:hover { color: #B91C1C; }
+
+  .btn-submit {
+    margin-top: 24px;
+    background: var(--teal);
+    color: white;
+    padding: 18px 36px;
+    border-radius: 12px;
+    font-size: 17px; font-weight: 700;
+    border: none; cursor: pointer;
+    box-shadow: 0 6px 20px rgba(19,186,213,0.25);
+    transition: all 0.15s;
+  }
+  .btn-submit:hover:not(:disabled) {
+    background: var(--teal-dark);
+    transform: translateY(-1px);
+  }
+  .btn-submit:disabled {
+    background: #CBD5E1; cursor: not-allowed;
+    box-shadow: none; transform: none;
+  }
+
+  .upload-status {
+    margin-top: 18px;
+    font-size: 15px;
+    min-height: 22px;
+    text-align: center;
+  }
+  .upload-status.success { color: #047857; font-weight: 700; }
+  .upload-status.error   { color: #B91C1C; font-weight: 700; }
+
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ─── HERO ─────────────────────────────── -->
+  <section class="slide hero" id="slide-0">
+    <div class="label">Supply Ops · SOP</div>
+    <h1>How to Submit Billing Info</h1>
+    <p class="purpose">Align the organizer's info on the Recess platform and HubSpot so accounting can pay them.</p>
+    <a class="start-btn" onclick="goTo(1); return false;" href="#slide-1">Start</a>
+    <div class="resume-banner" id="resume-banner">
+      <span class="resume-icon">💾</span>
+      <span>Resuming your draft from <strong id="resume-time">—</strong></span>
+      <button class="resume-clear" onclick="confirmClearDraft()">Clear progress</button>
+    </div>
+  </section>
+
+  <!-- ─── STEP 1 ───────────────────────────── -->
+  <section class="slide" id="slide-1">
+    <span class="step-num">Step 1</span>
+    <h2>Get the Vendor Billing Form filled out</h2>
+    <p class="body">Send the organizer the form below. Their answers are the source of truth for everything else in this SOP.</p>
+    <a class="btn-link" href="https://docs.google.com/document/d/1y0IjqatvD7a0sEh_xlNgacUW5hxnGB7o/edit" target="_blank">Open the Vendor Billing Form</a>
+    <div class="callout warn">
+      ⚠️ <span class="label-bold">GATE — don't skip this:</span>
+      Without this form, the organizer still gets the free product, but they <strong>do not get paid</strong>. Always push for this <em>before</em> onboarding or building anything in the platform.
+    </div>
+    <div class="callout tip">
+      💡 <span class="label-bold">TIP:</span>
+      Send it via email with a short note: "We can't pay you out until this is back. Takes 5 min."
+    </div>
+  </section>
+
+  <!-- ─── STEP 2 — Capture: Inputter name ──────────────────── -->
+  <section class="slide" id="slide-2">
+    <span class="step-num">Step 2</span>
+    <h2>Who's inputting this?</h2>
+    <p class="body">Type your name. We log it so accounting knows who handled this vendor's onboarding.</p>
+    <div class="input-block">
+      <label class="input-label" for="input-inputter">Your name</label>
+      <input type="text" id="input-inputter" class="sop-input"
+             placeholder="e.g. Ian Hong"
+             oninput="saveField('inputtedBy', this.value); markSaved('inputter-helper');"/>
+      <div class="input-helper" id="inputter-helper">
+        <span>Fills the "Inputted By" column (Col A) on the sheet</span>
+        <span class="saved-tick">✓ saved</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STEP 3 — Capture: Supplier / Company Name ─────────── -->
+  <section class="slide" id="slide-3">
+    <span class="step-num">Step 3</span>
+    <h2>Who is the supplier?</h2>
+    <p class="body">Type the <strong>Company Name</strong> exactly as it appears on the billing form. This goes into the sheet twice — and onto the Recess platform — all identically.</p>
+    <div class="input-block">
+      <label class="input-label" for="input-supplier">Company name (from the billing form)</label>
+      <input type="text" id="input-supplier" class="sop-input"
+             placeholder="e.g. Forum Asset Management"
+             oninput="saveField('supplier', this.value); markSaved('supplier-helper');"/>
+      <div class="input-helper" id="supplier-helper">
+        <span>Fills the "Supplier" (Col B) AND "Company Name from Vendor Form" (Col C) — identically</span>
+        <span class="saved-tick">✓ saved</span>
+      </div>
+    </div>
+    <div class="callout warn" style="margin-top: 24px;">
+      ⚠️ <span class="label-bold">Copy exactly:</span>
+      no abbreviations, no LLC if their form doesn't say LLC, no extra words. This same name is going on the Recess platform too — they all have to match.
+    </div>
+  </section>
+
+  <!-- ─── STEP 4 — Top half of form is REQUIRED for everyone ──── -->
+  <section class="slide" id="slide-4">
+    <span class="step-num">Step 4</span>
+    <h2>The top half of the form is required — every time</h2>
+    <p class="body">Regardless of how they pay (Bill.com or not), every vendor must fill out the entire <strong>Vendor Information</strong> section.</p>
+    <div class="callout warn">
+      ⚠️ <span class="label-bold">All 6 fields are non-negotiable:</span>
+      <ul style="margin: 8px 0 0 20px;">
+        <li>Company Name</li>
+        <li>Contact Name</li>
+        <li>Contact Title</li>
+        <li>Contact Email address</li>
+        <li>Phone Number</li>
+        <li>Company Address</li>
+      </ul>
+    </div>
+    <div class="callout tip">
+      💡 <span class="label-bold">If any of these are blank:</span>
+      bounce the form back to the organizer before you go any further. Don't try to guess or look it up — they fill it out, you don't.
+    </div>
+  </section>
+
+  <!-- ─── STEP 5 — Method of Payment branch ────────────── -->
+  <section class="slide" id="slide-5">
+    <span class="step-num">Step 5</span>
+    <h2>Now check: do they have a Bill.com account?</h2>
+    <p class="body">This determines which fields in the bottom half (<strong>Method of Payment</strong>) they need to fill.</p>
+    <div class="branch">
+      <div class="branch-card yes">
+        <div class="branch-condition">✓ Yes — they have Bill.com</div>
+        <div class="branch-then">
+          Confirm these two fields are filled:
+          <ul>
+            <li><strong>Payment Network ID</strong></li>
+            <li><strong>Bill.com email address</strong></li>
+          </ul>
+        </div>
+      </div>
+      <div class="branch-card no">
+        <div class="branch-condition">✗ No — no Bill.com</div>
+        <div class="branch-then">
+          They fill in the full <strong>Bank Information for ACH Payment</strong> section:
+          <ul>
+            <li>Bank Name</li>
+            <li>Bank Account Name</li>
+            <li>Bank Routing Number</li>
+            <li>Bank Account Number</li>
+            <li>Swift Code</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STEP 6 — Three names, one entity ─── -->
+  <section class="slide" id="slide-6">
+    <span class="step-num">Step 6 — Critical</span>
+    <h2>Same name in three places — exactly</h2>
+    <p class="body">The Supplier, the Organization Name, and the Company Name are <strong>all the same thing</strong>: the entity that gets paid. They must be identical across every system.</p>
+    <div class="match-row">
+      <div class="match-side">
+        <div class="where">On the Billing Form</div>
+        <div class="field">Company Name</div>
+        <div class="sample">"Forum Asset Management"</div>
+      </div>
+      <div class="match-equals">=</div>
+      <div class="match-side">
+        <div class="where">On the Sheet</div>
+        <div class="field">Supplier</div>
+        <div class="sample">"Forum Asset Management"</div>
+      </div>
+      <div class="match-equals">=</div>
+      <div class="match-side">
+        <div class="where">On the Recess Platform</div>
+        <div class="field">Organization Name</div>
+        <div class="sample">"Forum Asset Management"</div>
+      </div>
+    </div>
+    <div style="margin-top: 26px; text-align: center;">
+      <div style="display:inline-block; background: var(--ink); color: white;
+                   padding: 14px 28px; border-radius: 999px;
+                   font-size: 15px; font-weight: 800;
+                   letter-spacing: 0.08em; text-transform: uppercase;">
+        ⬆ The entity that gets paid
+      </div>
+    </div>
+    <div class="callout warn" style="margin-top: 26px;">
+      ⚠️ <span class="label-bold">DO NOT IMPROVISE:</span>
+      no abbreviations, no LLC if their form doesn't say LLC, no extra words. Copy exactly what they wrote on the form. If any of the three don't match, accounting can't reconcile → payment fails.
+    </div>
+  </section>
+
+  <!-- ─── STEP 7 — Supplier vs Supplier - Venue ─────── -->
+  <section class="slide" id="slide-7">
+    <span class="step-num">Step 7</span>
+    <h2>Is this a Supplier or a Supplier - Venue?</h2>
+    <p class="body">A <strong>Supplier</strong> is one entity that gets paid for everything. A <strong>Supplier - Venue</strong> has multiple venues that each get paid separately.</p>
+    <div class="choice-row">
+      <div class="choice-card" id="choice-supplier" onclick="selectSupplierType('Supplier')">
+        <div class="choice-title">Supplier</div>
+        <div class="choice-desc">One entity. One payout. Continue to the next step — no extra work here.</div>
+      </div>
+      <div class="choice-card" id="choice-supplier-venue" onclick="selectSupplierType('Supplier - Venue')">
+        <div class="choice-title">Supplier - Venue</div>
+        <div class="choice-desc">Multiple venues, each paid separately. Needs extra info before continuing.</div>
+      </div>
+    </div>
+
+    <div class="reveal" id="reveal-venue">
+      <div class="callout warn">
+        ⚠️ <span class="label-bold">Because this is Supplier - Venue, you'll do:</span>
+        <ul style="margin: 8px 0 0 20px;">
+          <li>Mark <strong>Column E</strong> ("Updated in Account Split Reference") as <strong>Yes</strong> on the main sheet</li>
+          <li>Add a new row to the <strong>Account Split Reference</strong> tab — vendor name = same supplier name from Step 3</li>
+          <li>Fill in plain-text notes below ↓</li>
+          <li>Date and "Added By" will auto-fill</li>
+        </ul>
+      </div>
+      <div class="input-block" style="margin-top: 20px;">
+        <label class="input-label" for="input-venue-notes">Venue-split notes (plain text — describe how the venues get split)</label>
+        <textarea id="input-venue-notes" class="sop-textarea"
+                  placeholder="e.g. 'Each property has its own LLC and bank account. See attached spreadsheet for routing per location.'"
+                  oninput="saveField('venueNotes', this.value); markSaved('venue-helper');"></textarea>
+        <div class="input-helper" id="venue-helper">
+          <span>Goes into the Account Split Reference notes column</span>
+          <span class="saved-tick">✓ saved</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── STEP 8 — Save documents into Drive folder (AUTOMATED) ───── -->
+  <section class="slide" id="slide-8">
+    <span class="step-num">Step 8</span>
+    <h2>Upload the form + W9</h2>
+    <p class="body">Drag both files here. We'll auto-create a folder named "<strong>Supplier Name — Today's Date</strong>" inside the Drive and drop both files inside.</p>
+
+    <label class="upload-zone" id="upload-zone" for="file-input">
+      <div class="upload-icon">📁</div>
+      <div class="upload-label">Drop files here or click to browse</div>
+      <div class="upload-hint">Vendor Billing Form + W-9 (PDF or DOCX)</div>
+      <input type="file" id="file-input" multiple accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
+             onchange="onFilesPicked(this.files)"/>
+      <ul class="file-list" id="file-list"></ul>
+    </label>
+
+    <button class="btn-submit" id="submit-btn" disabled onclick="submitToDrive()">
+      Create Folder & Upload →
+    </button>
+    <div class="upload-status" id="upload-status"></div>
+
+    <div class="callout note" style="margin-top: 20px; max-width: 720px;">
+      ℹ️ <span class="label-bold">What happens when you click Submit:</span>
+      <ul style="margin: 8px 0 0 20px; line-height: 1.6;">
+        <li>A new folder is created: <code>{supplier name} — {today's date}</code></li>
+        <li>Folder lives inside the <a href="https://drive.google.com/drive/u/0/folders/1TMr39s4aoGMiBmhjCJte7cl01TKmV6Wr" target="_blank">Vendor Onboarding Drive</a></li>
+        <li>Both files get uploaded into that new folder</li>
+        <li>The folder link auto-fills <strong>Column G</strong> ("Link to folder") on the sheet</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ─── STEP 9 — Bulk Import Form link (OPTIONAL) ───────────────── -->
+  <section class="slide" id="slide-9">
+    <span class="step-num optional">Step 9</span><span class="optional-pill">Optional</span>
+    <h2>Paste the Bulk Import Form link</h2>
+    <p class="body">If this supplier has a Bulk Import Form, paste the link below. Skips fine if there isn't one — this step is optional.</p>
+
+    <div class="input-block">
+      <label class="input-label" for="input-bulk-link">Bulk Import Form URL</label>
+      <input type="url" id="input-bulk-link" class="sop-input" placeholder="https://docs.google.com/..."
+             oninput="saveField('bulkImportLink', this.value); markSaved('bulk-helper');"/>
+      <div class="input-helper" id="bulk-helper">
+        Fills <strong>Column F</strong> ("Bulk Import Form Link") on the sheet.
+        <span class="saved-tick">✓ saved</span>
+      </div>
+    </div>
+
+    <div class="callout tip" style="margin-top: 20px; max-width: 720px;">
+      ✅ <span class="label-bold">Heads up — Column G is automatic.</span>
+      You don't need to paste a folder link anywhere. <strong>Column G</strong> ("Link to folder") auto-fills with the Drive folder created in Step 8. No action needed.
+    </div>
+  </section>
+
+  <!-- ─── STEP 10 — Multiple Billing Sheet link (OPTIONAL / SPLIT PAYOUTS) ───── -->
+  <section class="slide" id="slide-10">
+    <span class="step-num optional">Step 10</span><span class="optional-pill">Optional · Split payouts</span>
+    <h2>Multiple Billing Sheet (split-payout suppliers only)</h2>
+    <p class="body">
+      Only applies if the supplier <strong>manages all offers centrally</strong>, but the <strong>individual locations get paid out separately</strong> after the campaign. If that's the setup, they need to fill out the Multiple Billing template first.
+    </p>
+
+    <div class="branch" style="margin-bottom: 20px;">
+      <div class="branch-card yes">
+        <div class="branch-condition">✓ Yes — split payouts per location</div>
+        <div class="branch-then">
+          Send them the template below to fill out, then paste the link they share back into the input field.
+        </div>
+      </div>
+      <div class="branch-card no">
+        <div class="branch-condition">✗ No — single payout to one entity</div>
+        <div class="branch-then">
+          Skip this step. Leave Column H blank — it doesn't apply.
+        </div>
+      </div>
+    </div>
+
+    <a class="btn-link" href="https://docs.google.com/spreadsheets/d/1R4uSusbC5B8HBJ-SvtokAxogToHpi7oiX-m_qimzH5Y/edit?gid=0#gid=0" target="_blank">
+      Open Multiple Billing Sheet template
+    </a>
+
+    <div class="input-block" style="margin-top: 24px;">
+      <label class="input-label" for="input-multi-billing">Completed Multiple Billing Sheet URL</label>
+      <input type="url" id="input-multi-billing" class="sop-input" placeholder="https://docs.google.com/spreadsheets/..."
+             oninput="saveField('multiBillingLink', this.value); markSaved('multi-billing-helper');"/>
+      <div class="input-helper" id="multi-billing-helper">
+        Fills <strong>Column H</strong> ("Multiple Billing Sheet Link") on the sheet.
+        <span class="saved-tick">✓ saved</span>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<button class="nav-arrow left disabled" id="navLeft" onclick="navStep(-1)">‹</button>
+<button class="nav-arrow right" id="navRight" onclick="navStep(1)">›</button>
+
+<div class="progress" id="progressBar">
+  <span class="progress-text" id="progressText">Start</span>
+  <span class="autosave-tag" id="autosave-tag">✓ auto-saved</span>
+  <span class="dot active" data-i="0" onclick="goTo(0)"></span>
+  <span class="dot" data-i="1" onclick="goTo(1)"></span>
+  <span class="dot" data-i="2" onclick="goTo(2)"></span>
+  <span class="dot" data-i="3" onclick="goTo(3)"></span>
+  <span class="dot" data-i="4" onclick="goTo(4)"></span>
+  <span class="dot" data-i="5" onclick="goTo(5)"></span>
+  <span class="dot" data-i="6" onclick="goTo(6)"></span>
+  <span class="dot" data-i="7" onclick="goTo(7)"></span>
+  <span class="dot" data-i="8" onclick="goTo(8)"></span>
+  <span class="dot" data-i="9" onclick="goTo(9)"></span>
+  <span class="dot" data-i="10" onclick="goTo(10)"></span>
+</div>
+
+<script>
+  const deck = document.getElementById('deck');
+  const navLeft = document.getElementById('navLeft');
+  const navRight = document.getElementById('navRight');
+  const progText = document.getElementById('progressText');
+  const LABELS = ['Start', 'Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7', 'Step 8', 'Step 9', 'Step 10'];
+
+  // ─── Form data capture ──────────────────────────
+  // Stored client-side + localStorage so reload doesn't nuke progress.
+  // Will be POSTed to Apps Script webhook at the end.
+  window._sopData = {};
+  const STORAGE_KEY = 'recess_billing_sop_draft';
+
+  function saveField(key, value) {
+    window._sopData[key] = value.trim();
+    persistDraft();
+  }
+
+  function persistDraft() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        data: window._sopData,
+        savedAt: new Date().toISOString(),
+      }));
+      flashAutosave();
+    } catch (e) {
+      console.warn('[SOP] localStorage write failed:', e);
+    }
+  }
+
+  function flashAutosave() {
+    const tag = document.getElementById('autosave-tag');
+    if (!tag) return;
+    tag.classList.add('shown');
+    clearTimeout(window._t_autosave);
+    window._t_autosave = setTimeout(() => tag.classList.remove('shown'), 1200);
+  }
+
+  function loadDraft() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  function restoreDraft() {
+    const draft = loadDraft();
+    if (!draft || !draft.data || Object.keys(draft.data).length === 0) return;
+    window._sopData = draft.data;
+
+    // Restore each text input
+    const fieldToInputId = {
+      inputtedBy: 'input-inputter',
+      supplier: 'input-supplier',
+      venueNotes: 'input-venue-notes',
+      bulkImportLink: 'input-bulk-link',
+      multiBillingLink: 'input-multi-billing',
+    };
+    Object.entries(fieldToInputId).forEach(([key, id]) => {
+      const el = document.getElementById(id);
+      if (el && window._sopData[key]) el.value = window._sopData[key];
+    });
+
+    // Restore supplier-type choice (card highlight + venue reveal)
+    if (window._sopData.supplierType) {
+      const sup = document.getElementById('choice-supplier');
+      const supVen = document.getElementById('choice-supplier-venue');
+      if (sup) sup.classList.toggle('selected', window._sopData.supplierType === 'Supplier');
+      if (supVen) supVen.classList.toggle('selected', window._sopData.supplierType === 'Supplier - Venue');
+      const reveal = document.getElementById('reveal-venue');
+      if (reveal) reveal.classList.toggle('shown', window._sopData.supplierType === 'Supplier - Venue');
+    }
+
+    // Show the resume banner on the cover slide
+    const banner = document.getElementById('resume-banner');
+    const timeEl = document.getElementById('resume-time');
+    if (banner && timeEl && draft.savedAt) {
+      const when = new Date(draft.savedAt);
+      timeEl.textContent = when.toLocaleString('en-US', {
+        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+      });
+      banner.classList.add('shown');
+    }
+  }
+
+  function clearDraft() {
+    localStorage.removeItem(STORAGE_KEY);
+    window._sopData = {};
+    window._sopFiles = [];
+    // Blank text inputs + textareas
+    document.querySelectorAll('.sop-input, .sop-textarea').forEach(el => el.value = '');
+    // Unselect supplier-type cards + hide reveal
+    ['choice-supplier', 'choice-supplier-venue'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('selected');
+    });
+    const reveal = document.getElementById('reveal-venue');
+    if (reveal) reveal.classList.remove('shown');
+    // Hide the resume banner
+    const banner = document.getElementById('resume-banner');
+    if (banner) banner.classList.remove('shown');
+    // Clear file list UI
+    const list = document.getElementById('file-list');
+    if (list) list.innerHTML = '';
+    const zone = document.getElementById('upload-zone');
+    if (zone) zone.classList.remove('has-file');
+    const submitBtn = document.getElementById('submit-btn');
+    if (submitBtn) submitBtn.disabled = true;
+  }
+
+  function confirmClearDraft() {
+    if (confirm('Clear your saved draft and start over?')) clearDraft();
+  }
+
+  function markSaved(helperId) {
+    const el = document.getElementById(helperId);
+    if (!el) return;
+    const tick = el.querySelector('.saved-tick');
+    if (tick) {
+      tick.classList.add('shown');
+      clearTimeout(window['_t_'+helperId]);
+      window['_t_'+helperId] = setTimeout(() => tick.classList.remove('shown'), 1400);
+    }
+  }
+
+  // Supplier-type choice — toggle card selection + show/hide venue notes
+  function selectSupplierType(type) {
+    saveField('supplierType', type);
+    document.getElementById('choice-supplier').classList.toggle('selected', type === 'Supplier');
+    document.getElementById('choice-supplier-venue').classList.toggle('selected', type === 'Supplier - Venue');
+    const reveal = document.getElementById('reveal-venue');
+    if (reveal) reveal.classList.toggle('shown', type === 'Supplier - Venue');
+  }
+
+  // ─── File upload handling (single zone, multiple files) ───
+  window._sopFiles = [];
+
+  function renderFileList() {
+    const list = document.getElementById('file-list');
+    list.innerHTML = '';
+    window._sopFiles.forEach((f, idx) => {
+      const li = document.createElement('li');
+      const sizeKB = (f.size / 1024).toFixed(1);
+      li.innerHTML = '<span>✓ ' + f.name + ' <span style="color:#94A3B8">(' + sizeKB + ' KB)</span></span>' +
+                     '<button class="remove-file" onclick="event.preventDefault(); event.stopPropagation(); removeFile(' + idx + ')" title="Remove">×</button>';
+      list.appendChild(li);
+    });
+    const zone = document.getElementById('upload-zone');
+    zone.classList.toggle('has-file', window._sopFiles.length > 0);
+    document.getElementById('submit-btn').disabled = window._sopFiles.length === 0;
+  }
+
+  function onFilesPicked(fileList) {
+    Array.from(fileList).forEach(f => window._sopFiles.push(f));
+    renderFileList();
+  }
+
+  function removeFile(idx) {
+    window._sopFiles.splice(idx, 1);
+    renderFileList();
+  }
+
+  // Drag-and-drop on the single zone
+  (function() {
+    const zone = document.getElementById('upload-zone');
+    if (!zone) return;
+    ['dragenter', 'dragover'].forEach(evt =>
+      zone.addEventListener(evt, e => { e.preventDefault(); zone.classList.add('dragover'); }));
+    ['dragleave', 'drop'].forEach(evt =>
+      zone.addEventListener(evt, e => { e.preventDefault(); zone.classList.remove('dragover'); }));
+    zone.addEventListener('drop', e => {
+      onFilesPicked(e.dataTransfer.files);
+    });
+  })();
+
+  // Submit handler — POSTs all data + files to Apps Script webhook
+  // (URL gets filled in once we deploy the script)
+  async function submitToDrive() {
+    const status = document.getElementById('upload-status');
+    const btn = document.getElementById('submit-btn');
+    const WEBHOOK_URL = ''; // ← Will be filled with deployed Apps Script Web App URL
+
+    if (!WEBHOOK_URL) {
+      status.className = 'upload-status';
+      status.innerHTML = '⚙️ Backend not wired yet — Apps Script webhook URL will go here. <br>For now, click <a href="https://drive.google.com/drive/u/0/folders/1TMr39s4aoGMiBmhjCJte7cl01TKmV6Wr" target="_blank">the Drive</a> and upload manually.';
+      console.log('[SOP] would submit:', { ...window._sopData,
+        files: window._sopFiles.map(f => f.name) });
+      return;
+    }
+
+    btn.disabled = true;
+    status.className = 'upload-status';
+    status.textContent = '⏳ Uploading and creating folder…';
+
+    try {
+      const formData = new FormData();
+      formData.append('inputtedBy', window._sopData.inputtedBy || '');
+      formData.append('supplier', window._sopData.supplier || '');
+      formData.append('supplierType', window._sopData.supplierType || '');
+      formData.append('venueNotes', window._sopData.venueNotes || '');
+      formData.append('bulkImportLink', window._sopData.bulkImportLink || '');
+      formData.append('multiBillingLink', window._sopData.multiBillingLink || '');
+      window._sopFiles.forEach((f, i) => formData.append('file' + i, f));
+      const res = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.success) {
+        status.className = 'upload-status success';
+        status.innerHTML = '✓ Folder created: <a href="' + data.folderUrl + '" target="_blank">' + data.folderName + '</a>';
+        // Wipe the draft so the next submitter starts fresh
+        localStorage.removeItem(STORAGE_KEY);
+      } else {
+        throw new Error(data.error || 'Unknown error');
+      }
+    } catch (e) {
+      btn.disabled = false;
+      status.className = 'upload-status error';
+      status.textContent = '✗ Upload failed: ' + e.message;
+    }
+  }
+  const TOTAL = LABELS.length;
+
+  function current() { return Math.round(deck.scrollLeft / window.innerWidth); }
+  function goTo(i) { deck.scrollTo({ left: i * window.innerWidth, behavior: 'smooth' }); }
+  function navStep(d) {
+    const next = Math.max(0, Math.min(TOTAL - 1, current() + d));
+    goTo(next);
+  }
+  function update() {
+    const i = current();
+    document.querySelectorAll('.dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
+    progText.textContent = LABELS[i] || ('Step ' + i);
+    navLeft.classList.toggle('disabled', i === 0);
+    navRight.classList.toggle('disabled', i === TOTAL - 1);
+  }
+  deck.addEventListener('scroll', () => requestAnimationFrame(update));
+  window.addEventListener('resize', update);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') navStep(1);
+    if (e.key === 'ArrowLeft')  navStep(-1);
+  });
+
+  // Restore any saved draft from localStorage on page load
+  restoreDraft();
+  update();
+</script>
+
+</body>
+</html>
