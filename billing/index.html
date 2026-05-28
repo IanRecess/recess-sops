@@ -405,10 +405,10 @@
   /* expandable section that appears on selection */
   .reveal {
     max-height: 0; overflow: hidden;
-    transition: max-height 0.3s ease;
-    width: 100%; max-width: 600px;
+    transition: max-height 0.4s ease;
+    width: 100%; max-width: 640px;
   }
-  .reveal.shown { max-height: 600px; margin-top: 28px; }
+  .reveal.shown { max-height: 1200px; margin-top: 22px; }
 
   .sop-textarea {
     width: 100%;
@@ -814,21 +814,38 @@
 
     <div class="reveal" id="reveal-venue">
       <div class="callout warn">
-        ⚠️ <span class="label-bold">Because this is Supplier - Venue, you'll do:</span>
+        ⚠️ <span class="label-bold">Because this is Supplier - Venue, all of this happens automatically:</span>
         <ul style="margin: 8px 0 0 20px;">
-          <li>Mark <strong>Column E</strong> ("Updated in Account Split Reference") as <strong>Yes</strong> on the main sheet</li>
-          <li>Add a new row to the <strong>Account Split Reference</strong> tab — vendor name = same supplier name from Step 3</li>
-          <li>Fill in plain-text notes below ↓</li>
-          <li>Date and "Added By" will auto-fill</li>
+          <li><strong>Column E</strong> on the main sheet → marked <strong>Yes</strong></li>
+          <li><strong>Account Split Reference (Auto)</strong> tab → new row added with vendor name, date, your name, and the notes below</li>
+          <li><strong>Column H</strong> on the main sheet → auto-filled with the Multiple Billing Sheet link below</li>
         </ul>
       </div>
-      <div class="input-block" style="margin-top: 20px;">
-        <label class="input-label" for="input-venue-notes">Venue-split notes (plain text — describe how the venues get split)</label>
+
+      <div class="input-block" style="margin-top: 18px;">
+        <label class="input-label" for="input-venue-notes">1 · Venue-split notes (plain text — how do the venues get split?)</label>
         <textarea id="input-venue-notes" class="sop-textarea"
                   placeholder="e.g. 'Each property has its own LLC and bank account. See attached spreadsheet for routing per location.'"
                   oninput="saveField('venueNotes', this.value); markSaved('venue-helper'); refreshGate(7);"></textarea>
         <div class="input-helper" id="venue-helper">
-          <span>Goes into the Account Split Reference notes column</span>
+          <span>Goes into the Account Split Reference (Auto) notes column</span>
+          <span class="saved-tick">✓ saved</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 22px; text-align: left;">
+        <div class="input-label" style="margin-bottom: 8px;">2 · Have them fill out the Multiple Billing Sheet template</div>
+        <a class="btn-link" href="https://docs.google.com/spreadsheets/d/1R4uSusbC5B8HBJ-SvtokAxogToHpi7oiX-m_qimzH5Y/edit?gid=0#gid=0" target="_blank">
+          Open Multiple Billing Sheet template
+        </a>
+      </div>
+
+      <div class="input-block" style="margin-top: 18px;">
+        <label class="input-label" for="input-multi-billing">3 · Paste the completed Multiple Billing Sheet URL</label>
+        <input type="url" id="input-multi-billing" class="sop-input" placeholder="https://docs.google.com/spreadsheets/..."
+               oninput="saveField('multiBillingLink', this.value); markSaved('multi-billing-helper');"/>
+        <div class="input-helper" id="multi-billing-helper">
+          <span>Auto-fills <strong>Column H</strong> on the main sheet</span>
           <span class="saved-tick">✓ saved</span>
         </div>
       </div>
@@ -899,46 +916,6 @@
     </div>
   </section>
 
-  <!-- ─── STEP 10 — Multiple Billing Sheet link (OPTIONAL / SPLIT PAYOUTS) ───── -->
-  <section class="slide" id="slide-10">
-    <h2>Multiple Billing Sheet (split-payout suppliers only)</h2>
-    <p class="body">
-      Only applies if the supplier <strong>manages all offers centrally</strong>, but the <strong>individual locations get paid out separately</strong> after the campaign. If that's the setup, they need to fill out the Multiple Billing template first.
-    </p>
-
-    <div class="branch" style="margin-bottom: 20px;">
-      <div class="branch-card yes">
-        <div class="branch-condition">✓ Yes — split payouts per location</div>
-        <div class="branch-then">
-          Send them the template below to fill out, then paste the link they share back into the input field.
-        </div>
-      </div>
-      <div class="branch-card no">
-        <div class="branch-condition">✗ No — single payout to one entity</div>
-        <div class="branch-then">
-          Skip this step. Leave Column H blank — it doesn't apply.
-        </div>
-      </div>
-    </div>
-
-    <a class="btn-link" href="https://docs.google.com/spreadsheets/d/1R4uSusbC5B8HBJ-SvtokAxogToHpi7oiX-m_qimzH5Y/edit?gid=0#gid=0" target="_blank">
-      Open Multiple Billing Sheet template
-    </a>
-
-    <div class="input-block" style="margin-top: 24px;">
-      <label class="input-label" for="input-multi-billing">Completed Multiple Billing Sheet URL</label>
-      <input type="url" id="input-multi-billing" class="sop-input" placeholder="https://docs.google.com/spreadsheets/..."
-             oninput="saveField('multiBillingLink', this.value); markSaved('multi-billing-helper');"/>
-      <div class="input-helper" id="multi-billing-helper">
-        Fills <strong>Column H</strong> ("Multiple Billing Sheet Link") on the sheet.
-        <span class="saved-tick">✓ saved</span>
-      </div>
-    </div>
-    <div class="continue-row">
-      <button class="continue-btn" id="cont-10" onclick="finishAndGoToDone()">Finish</button>
-    </div>
-  </section>
-
   <!-- ─── FINAL — Live view of the destination sheet ─────────────── -->
   <section class="slide final-slide" id="slide-final">
     <span class="step-num final-pill">Done</span>
@@ -985,15 +962,14 @@
   <span class="dot" data-i="7" onclick="dotClick(7)"></span>
   <span class="dot" data-i="8" onclick="dotClick(8)"></span>
   <span class="dot" data-i="9" onclick="dotClick(9)"></span>
-  <span class="dot" data-i="10" onclick="dotClick(10)"></span>
-  <span class="dot final-dot" data-i="11" onclick="dotClick(11)" title="Done — view the live sheet"></span>
+  <span class="dot final-dot" data-i="10" onclick="dotClick(10)" title="Done — view the live sheet"></span>
 </div>
 
 <script>
   const deck = document.getElementById('deck');
   const navLeft = document.getElementById('navLeft');
   const progText = document.getElementById('progressText');
-  const LABELS = ['Start', 'Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7', 'Step 8', 'Step 9', 'Step 10', 'Done'];
+  const LABELS = ['Start', 'Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7', 'Step 8', 'Step 9', 'Done'];
 
   // ─── Form data capture + progress gate ──────────
   // Stored client-side + localStorage so reload doesn't nuke progress.
@@ -1179,16 +1155,15 @@
   // No gating — users can freely scroll/click through. Continue button
   // is just the obvious primary CTA. Hidden on Hero (0) and Done (11).
   const STEP_CTAS = {
-    1:  { label: "I've sent the form", action: () => goTo(2),  hint: "" },
-    2:  { label: "Continue",           action: () => goTo(3),  hint: "" },
-    3:  { label: "Continue",           action: () => goTo(4),  hint: "" },
-    4:  { label: "Top half confirmed", action: () => goTo(5),  hint: "" },
-    5:  { label: "Continue",           action: () => goTo(6),  hint: "" },
-    6:  { label: "Names match",        action: () => goTo(7),  hint: "" },
-    7:  { label: "Continue",           action: () => goTo(8),  hint: "" },
-    8:  { label: "Continue",           action: () => goTo(9),  hint: "" },
-    9:  { label: "Continue",           action: () => goTo(10), hint: "Optional" },
-    10: { label: "Finish",             action: () => finishAndGoToDone(), hint: "Optional" },
+    1:  { label: "I've sent the form", action: () => goTo(2), hint: "" },
+    2:  { label: "Continue",           action: () => goTo(3), hint: "" },
+    3:  { label: "Continue",           action: () => goTo(4), hint: "" },
+    4:  { label: "Top half confirmed", action: () => goTo(5), hint: "" },
+    5:  { label: "Continue",           action: () => goTo(6), hint: "" },
+    6:  { label: "Names match",        action: () => goTo(7), hint: "" },
+    7:  { label: "Continue",           action: () => goTo(8), hint: "" },
+    8:  { label: "Continue",           action: () => goTo(9), hint: "" },
+    9:  { label: "Finish",             action: () => finishAndGoToDone(), hint: "Optional" },
   };
 
   // Backward-compat shim — old inline calls still work
