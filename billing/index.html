@@ -507,6 +507,70 @@
   .upload-status.success { color: #047857; font-weight: 700; }
   .upload-status.error   { color: #B91C1C; font-weight: 700; }
 
+  /* ─── Push-to-Workbook summary card + button ─── */
+  .summary-card {
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 4px;
+    padding: 14px 18px;
+    max-width: 540px; width: 100%;
+    text-align: left;
+    margin: 10px 0 22px;
+    box-shadow: 0 2px 8px rgba(15,28,46,0.04);
+  }
+  .summary-row {
+    display: flex; align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid #F1F5F9;
+    font-size: 13.5px;
+  }
+  .summary-row:last-child { border-bottom: none; }
+  .summary-label {
+    flex: 0 0 130px;
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .summary-value {
+    flex: 1;
+    color: var(--ink);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    direction: ltr;
+  }
+  .summary-value.muted { color: #94A3B8; font-weight: 400; font-style: italic; }
+
+  .push-btn {
+    background: var(--teal);
+    color: white;
+    padding: 18px 38px;
+    border-radius: 3px;
+    border: none;
+    font-size: 17px; font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 10px 28px rgba(19,186,213,0.35);
+    transition: all 0.15s;
+    font-family: inherit;
+    min-width: 260px;
+    animation: ctaPulse 2.4s ease-in-out infinite;
+  }
+  .push-btn:hover:not(:disabled) {
+    background: var(--teal-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(19,186,213,0.45);
+  }
+  .push-btn:disabled {
+    background: #CBD5E1;
+    cursor: not-allowed;
+    animation: none;
+    box-shadow: none;
+  }
+  .push-btn::after { content: " →"; font-weight: 700; }
+
   /* ─── In-step Continue containers (now unused — kept hidden) ─── */
   .continue-row { display: none !important; }
 
@@ -858,11 +922,10 @@
     </div>
   </section>
 
-  <!-- ─── STEP 8 — Save documents into Drive folder (AUTOMATED) ───── -->
+  <!-- ─── STEP 8 — Stage form + W9 files (upload happens on final step) ───── -->
   <section class="slide" id="slide-8">
-    <span class="step-num">Step 8</span>
-    <h2>Upload the form + W9</h2>
-    <p class="body">Drag both files here. We'll auto-create a folder named "<strong>Supplier Name — Today's Date</strong>" inside the Drive and drop both files inside.</p>
+    <h2>Attach the form + W9</h2>
+    <p class="body">Drag both files here. They'll be uploaded into a new Drive folder named "<strong>Supplier Name — Today's Date</strong>" when you click <strong>Push to Workbook</strong> on the final step.</p>
 
     <label class="upload-zone" id="upload-zone" for="file-input">
       <div class="upload-icon">📁</div>
@@ -873,22 +936,9 @@
       <ul class="file-list" id="file-list"></ul>
     </label>
 
-    <button class="btn-submit" id="submit-btn" disabled onclick="submitToDrive()">
-      Create Folder & Upload →
-    </button>
-    <div class="upload-status" id="upload-status"></div>
-
-    <div class="callout note" style="margin-top: 20px; max-width: 720px;">
-      ℹ️ <span class="label-bold">What happens when you click Submit:</span>
-      <ul style="margin: 8px 0 0 20px; line-height: 1.6;">
-        <li>A new folder is created: <code>{supplier name} — {today's date}</code></li>
-        <li>Folder lives inside the <a href="https://drive.google.com/drive/u/0/folders/1TMr39s4aoGMiBmhjCJte7cl01TKmV6Wr" target="_blank">Vendor Onboarding Drive</a></li>
-        <li>Both files get uploaded into that new folder</li>
-        <li>The folder link auto-fills <strong>Column G</strong> ("Link to folder") on the sheet</li>
-      </ul>
-    </div>
-    <div class="continue-row" id="cont-8-row" style="display:none;">
-      <button class="continue-btn" id="cont-8" onclick="unlockAndGo(9)">Continue</button>
+    <div class="callout note" style="margin-top: 14px;">
+      ℹ️ <span class="label-bold">Files are staged, not uploaded yet.</span>
+      Continue through Step 9 and click <strong>Push to Workbook</strong> on the final step to push everything.
     </div>
   </section>
 
@@ -911,9 +961,50 @@
       ✅ <span class="label-bold">Heads up — Column G is automatic.</span>
       You don't need to paste a folder link anywhere. <strong>Column G</strong> ("Link to folder") auto-fills with the Drive folder created in Step 8. No action needed.
     </div>
-    <div class="continue-row">
-      <button class="continue-btn" id="cont-9" onclick="unlockAndGo(10)">Continue</button>
+  </section>
+
+  <!-- ─── STEP 10 — Final review + Push to Workbook ───────────────── -->
+  <section class="slide" id="slide-push">
+    <h2>Push to Workbook</h2>
+    <p class="body">Click below to write everything to the sheet. This creates the Drive folder, uploads your files, writes columns A–I on the main sheet, and (if Supplier - Venue) adds a row to Account Split Reference (Auto).</p>
+
+    <div class="summary-card" id="push-summary">
+      <div class="summary-row">
+        <div class="summary-label">Inputter</div>
+        <div class="summary-value" id="sum-inputter">—</div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-label">Supplier</div>
+        <div class="summary-value" id="sum-supplier">—</div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-label">Type</div>
+        <div class="summary-value" id="sum-type">—</div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-label">Bill.com</div>
+        <div class="summary-value" id="sum-billcom">—</div>
+      </div>
+      <div class="summary-row">
+        <div class="summary-label">Files</div>
+        <div class="summary-value" id="sum-files">—</div>
+      </div>
+      <div class="summary-row" id="sum-row-venue" style="display: none;">
+        <div class="summary-label">Venue notes</div>
+        <div class="summary-value" id="sum-venue">—</div>
+      </div>
+      <div class="summary-row" id="sum-row-multi" style="display: none;">
+        <div class="summary-label">Multi billing</div>
+        <div class="summary-value" id="sum-multi">—</div>
+      </div>
+      <div class="summary-row" id="sum-row-bulk" style="display: none;">
+        <div class="summary-label">Bulk import</div>
+        <div class="summary-value" id="sum-bulk">—</div>
+      </div>
     </div>
+
+    <button class="push-btn" id="push-btn" onclick="submitToDrive()">Push to Workbook</button>
+    <div class="upload-status" id="upload-status"></div>
   </section>
 
   <!-- ─── FINAL — Live view of the destination sheet ─────────────── -->
@@ -962,14 +1053,15 @@
   <span class="dot" data-i="7" onclick="dotClick(7)"></span>
   <span class="dot" data-i="8" onclick="dotClick(8)"></span>
   <span class="dot" data-i="9" onclick="dotClick(9)"></span>
-  <span class="dot final-dot" data-i="10" onclick="dotClick(10)" title="Done — view the live sheet"></span>
+  <span class="dot" data-i="10" onclick="dotClick(10)" title="Push to Workbook"></span>
+  <span class="dot final-dot" data-i="11" onclick="dotClick(11)" title="Done — view the live sheet"></span>
 </div>
 
 <script>
   const deck = document.getElementById('deck');
   const navLeft = document.getElementById('navLeft');
   const progText = document.getElementById('progressText');
-  const LABELS = ['Start', 'Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7', 'Step 8', 'Step 9', 'Done'];
+  const LABELS = ['Start', 'Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7', 'Step 8', 'Step 9', 'Push', 'Done'];
 
   // ─── Form data capture + progress gate ──────────
   // Stored client-side + localStorage so reload doesn't nuke progress.
@@ -1103,8 +1195,10 @@
     if (list) list.innerHTML = '';
     const zone = document.getElementById('upload-zone');
     if (zone) zone.classList.remove('has-file');
-    const submitBtn = document.getElementById('submit-btn');
-    if (submitBtn) submitBtn.disabled = true;
+    const pushBtn = document.getElementById('push-btn');
+    if (pushBtn) pushBtn.disabled = false;
+    const status = document.getElementById('upload-status');
+    if (status) { status.textContent = ''; status.className = 'upload-status'; }
     // Re-disable all gated Continues
     [2,3,5,7].forEach(refreshGate);
     // Hide Step 8 Continue
@@ -1155,15 +1249,16 @@
   // No gating — users can freely scroll/click through. Continue button
   // is just the obvious primary CTA. Hidden on Hero (0) and Done (11).
   const STEP_CTAS = {
-    1:  { label: "I've sent the form", action: () => goTo(2), hint: "" },
-    2:  { label: "Continue",           action: () => goTo(3), hint: "" },
-    3:  { label: "Continue",           action: () => goTo(4), hint: "" },
-    4:  { label: "Top half confirmed", action: () => goTo(5), hint: "" },
-    5:  { label: "Continue",           action: () => goTo(6), hint: "" },
-    6:  { label: "Names match",        action: () => goTo(7), hint: "" },
-    7:  { label: "Continue",           action: () => goTo(8), hint: "" },
-    8:  { label: "Continue",           action: () => goTo(9), hint: "" },
-    9:  { label: "Finish",             action: () => finishAndGoToDone(), hint: "Optional" },
+    1:  { label: "I've sent the form", action: () => goTo(2),  hint: "" },
+    2:  { label: "Continue",           action: () => goTo(3),  hint: "" },
+    3:  { label: "Continue",           action: () => goTo(4),  hint: "" },
+    4:  { label: "Top half confirmed", action: () => goTo(5),  hint: "" },
+    5:  { label: "Continue",           action: () => goTo(6),  hint: "" },
+    6:  { label: "Names match",        action: () => goTo(7),  hint: "" },
+    7:  { label: "Continue",           action: () => goTo(8),  hint: "" },
+    8:  { label: "Continue",           action: () => goTo(9),  hint: "" },
+    9:  { label: "Review & Push",      action: () => goTo(10), hint: "Optional · skip if no bulk import link" },
+    // Slide 10 (Push to Workbook) intentionally has no floating CTA — the big inline Push button is THE action
   };
 
   // Backward-compat shim — old inline calls still work
@@ -1203,7 +1298,8 @@
     });
     const zone = document.getElementById('upload-zone');
     zone.classList.toggle('has-file', window._sopFiles.length > 0);
-    document.getElementById('submit-btn').disabled = window._sopFiles.length === 0;
+    // If user is currently on the Push slide, refresh the summary too
+    if (current() === 10) populateSummary();
   }
 
   function onFilesPicked(fileList) {
@@ -1251,9 +1347,9 @@
 
   async function submitToDrive() {
     const status = document.getElementById('upload-status');
-    const btn = document.getElementById('submit-btn');
+    const btn = document.getElementById('push-btn');
 
-    btn.disabled = true;
+    if (btn) btn.disabled = true;
     status.className = 'upload-status';
     status.textContent = '⏳ Reading files…';
 
@@ -1266,7 +1362,7 @@
         b64: await fileToBase64(f),
       })));
 
-      status.textContent = '⏳ Uploading + creating folder…';
+      status.textContent = '⏳ Pushing to workbook…';
 
       const payload = {
         inputtedBy:        window._sopData.inputtedBy        || '',
@@ -1288,20 +1384,56 @@
 
       if (data.success) {
         status.className = 'upload-status success';
-        status.innerHTML = '✓ Folder created: <a href="' + data.folderUrl + '" target="_blank">' + data.folderName + '</a> · '
+        status.innerHTML = '✓ Pushed · folder: <a href="' + data.folderUrl + '" target="_blank">' + data.folderName + '</a> · '
                          + data.filesUploaded + ' file(s) uploaded';
-        // Unlock the floating Continue button so they can advance past Step 8
-        window._step8Submitted = true;
-        updateFloatingCta();
-        // Draft will be cleared once they hit Done (slide 11) — that's the real wrap-up.
+        // Brief pause so the success message registers, then advance to Done + wipe draft
+        setTimeout(() => {
+          goTo(11);
+          setTimeout(() => localStorage.removeItem(STORAGE_KEY), 400);
+        }, 1500);
       } else {
         throw new Error(data.error || 'Unknown error');
       }
     } catch (e) {
-      btn.disabled = false;
+      if (btn) btn.disabled = false;
       status.className = 'upload-status error';
-      status.textContent = '✗ Upload failed: ' + e.message;
+      status.textContent = '✗ Push failed: ' + e.message;
     }
+  }
+
+  // Populate the Push-to-Workbook summary card from window._sopData + _sopFiles
+  function populateSummary() {
+    const d = window._sopData || {};
+    const files = window._sopFiles || [];
+    const set = (id, value) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (value && String(value).trim()) {
+        el.textContent = String(value).length > 50 ? String(value).slice(0, 50) + '…' : value;
+        el.classList.remove('muted');
+      } else {
+        el.textContent = '—';
+        el.classList.add('muted');
+      }
+    };
+    set('sum-inputter', d.inputtedBy);
+    set('sum-supplier', d.supplier);
+    set('sum-type',     d.supplierType);
+    set('sum-billcom',  d.billcom === 'yes' ? 'Yes' : (d.billcom === 'no' ? 'No' : ''));
+    set('sum-files',    files.length ? files.length + ' file(s)' : '');
+
+    const isVenue = d.supplierType === 'Supplier - Venue';
+    const venueRow = document.getElementById('sum-row-venue');
+    const multiRow = document.getElementById('sum-row-multi');
+    const bulkRow  = document.getElementById('sum-row-bulk');
+    if (venueRow) venueRow.style.display = isVenue ? 'flex' : 'none';
+    if (multiRow) multiRow.style.display = isVenue ? 'flex' : 'none';
+    if (bulkRow)  bulkRow.style.display  = d.bulkImportLink ? 'flex' : 'none';
+    if (isVenue) {
+      set('sum-venue', d.venueNotes);
+      set('sum-multi', d.multiBillingLink);
+    }
+    if (d.bulkImportLink) set('sum-bulk', d.bulkImportLink);
   }
   const TOTAL = LABELS.length;
 
@@ -1342,6 +1474,7 @@
     progText.textContent = LABELS[i] || ('Step ' + i);
     navLeft.classList.toggle('disabled', i === 0);
     updateFloatingCta();
+    if (i === 10) populateSummary();
   }
 
   deck.addEventListener('scroll', () => requestAnimationFrame(update));
