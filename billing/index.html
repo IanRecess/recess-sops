@@ -99,11 +99,10 @@
   }
   .resume-clear:hover { background: rgba(255,255,255,0.45); }
 
-  /* tiny auto-save indicator that lives in the progress bar */
+  /* tiny auto-save indicator that flashes briefly under the dots */
   .autosave-tag {
-    font-size: 11px;
-    color: var(--muted);
-    margin-left: 12px;
+    font-size: 10px;
+    color: #94A3B8;
     opacity: 0;
     transition: opacity 0.3s;
   }
@@ -235,24 +234,12 @@
   .nav-arrow.left  { left: 24px; }
   .nav-arrow.right { right: 24px; }
 
-  .progress {
-    position: fixed; bottom: 32px;
-    left: 50%; transform: translateX(-50%);
-    display: flex; gap: 10px; align-items: center;
-    background: white; padding: 12px 22px;
-    border-radius: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    z-index: 100;
-  }
-  .progress-text {
-    font-size: 13px; font-weight: 700;
-    color: var(--muted); margin-right: 6px;
-  }
   .dot {
-    width: 10px; height: 10px; border-radius: 50%;
+    width: 7px; height: 7px; border-radius: 50%;
     background: #E5E7EB; cursor: pointer;
     transition: all 0.15s;
   }
-  .dot.active { background: var(--teal); transform: scale(1.4); }
+  .dot.active { background: var(--teal); transform: scale(1.5); }
   .dot:hover { background: var(--teal-dark); }
   .dot.final-dot { background: #A7F3D0; }
   .dot.final-dot.active { background: #047857; }
@@ -574,7 +561,7 @@
   /* ─── In-step Continue containers (now unused — kept hidden) ─── */
   .continue-row { display: none !important; }
 
-  /* ─── Floating Continue button (fixed, right-side, vertically centered) ─── */
+  /* ─── Floating Continue + progress cluster (fixed, right-side, vertically centered) ─── */
   .float-cta {
     position: fixed;
     right: 28px; top: 50%;
@@ -582,10 +569,34 @@
     z-index: 200;
     display: none;
     flex-direction: column;
-    align-items: stretch;
-    gap: 6px;
+    align-items: center;
+    gap: 4px;
   }
   .float-cta.shown { display: flex; }
+  .dots-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 14px;
+    padding: 8px 4px;
+    justify-content: center;
+  }
+  .progress-text-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 2px;
+    font-size: 10px;
+  }
+  .progress-text-row .progress-text {
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+  }
+  .progress-text-row .autosave-tag {
+    color: #94A3B8;
+    margin-left: 0;
+  }
   .float-cta-label { display: none; }   /* removed per design */
   .float-cta-btn {
     display: inline-flex;
@@ -1034,27 +1045,28 @@
 
 <button class="nav-arrow left disabled" id="navLeft" onclick="goBack()" title="Go back">‹</button>
 
-<!-- Floating Continue CTA (right-side, vertically centered) -->
+<!-- Floating Continue CTA + progress dots (right-side, vertically centered) -->
 <div class="float-cta" id="floatCta">
   <button class="float-cta-btn" id="floatCtaBtn" disabled>Continue</button>
   <div class="float-cta-hint" id="floatCtaHint"></div>
-</div>
-
-<div class="progress" id="progressBar">
-  <span class="progress-text" id="progressText">Start</span>
-  <span class="autosave-tag" id="autosave-tag">✓ auto-saved</span>
-  <span class="dot active" data-i="0" onclick="dotClick(0)"></span>
-  <span class="dot" data-i="1" onclick="dotClick(1)"></span>
-  <span class="dot" data-i="2" onclick="dotClick(2)"></span>
-  <span class="dot" data-i="3" onclick="dotClick(3)"></span>
-  <span class="dot" data-i="4" onclick="dotClick(4)"></span>
-  <span class="dot" data-i="5" onclick="dotClick(5)"></span>
-  <span class="dot" data-i="6" onclick="dotClick(6)"></span>
-  <span class="dot" data-i="7" onclick="dotClick(7)"></span>
-  <span class="dot" data-i="8" onclick="dotClick(8)"></span>
-  <span class="dot" data-i="9" onclick="dotClick(9)"></span>
-  <span class="dot" data-i="10" onclick="dotClick(10)" title="Push to Workbook"></span>
-  <span class="dot final-dot" data-i="11" onclick="dotClick(11)" title="Done — view the live sheet"></span>
+  <div class="dots-row" id="dotsRow">
+    <span class="dot active" data-i="0" onclick="dotClick(0)"></span>
+    <span class="dot" data-i="1" onclick="dotClick(1)"></span>
+    <span class="dot" data-i="2" onclick="dotClick(2)"></span>
+    <span class="dot" data-i="3" onclick="dotClick(3)"></span>
+    <span class="dot" data-i="4" onclick="dotClick(4)"></span>
+    <span class="dot" data-i="5" onclick="dotClick(5)"></span>
+    <span class="dot" data-i="6" onclick="dotClick(6)"></span>
+    <span class="dot" data-i="7" onclick="dotClick(7)"></span>
+    <span class="dot" data-i="8" onclick="dotClick(8)"></span>
+    <span class="dot" data-i="9" onclick="dotClick(9)"></span>
+    <span class="dot" data-i="10" onclick="dotClick(10)" title="Push to Workbook"></span>
+    <span class="dot final-dot" data-i="11" onclick="dotClick(11)" title="Done — view the live sheet"></span>
+  </div>
+  <div class="progress-text-row">
+    <span class="progress-text" id="progressText">Start</span>
+    <span class="autosave-tag" id="autosave-tag">✓ auto-saved</span>
+  </div>
 </div>
 
 <script>
