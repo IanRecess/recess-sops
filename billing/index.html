@@ -577,45 +577,6 @@
     }
   }
 
-  /* ─── Preview-mode toggle (top-right) ─── */
-  .preview-toggle {
-    position: fixed;
-    top: 14px; right: 18px;
-    z-index: 300;
-    background: white;
-    border: 1px solid #E5E7EB;
-    border-radius: 3px;
-    padding: 6px 12px;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--muted);
-    cursor: pointer;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-    transition: all 0.15s;
-    font-family: inherit;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-  }
-  .preview-toggle:hover { background: #F8FAFC; color: var(--ink); }
-  .preview-toggle.on {
-    background: #FEF3C7;
-    border-color: #FBBF24;
-    color: #92400E;
-  }
-  .preview-toggle .dot-indicator {
-    width: 8px; height: 8px; border-radius: 50%;
-    background: #CBD5E1;
-  }
-  .preview-toggle.on .dot-indicator { background: #F59E0B; }
-
-  /* ─── Locked progress dot (future steps not yet unlocked) ─── */
-  .dot.locked {
-    background: #F1F5F9;
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-  .dot.locked:hover { background: #F1F5F9; }
 
   /* ─── Selectable yes/no branch cards (Bill.com step) ─── */
   .branch-card.selectable {
@@ -916,7 +877,6 @@
 
   <!-- ─── STEP 9 — Bulk Import Form link (OPTIONAL) ───────────────── -->
   <section class="slide" id="slide-9">
-    <span class="step-num optional">Step 9</span><span class="optional-pill">Optional</span>
     <h2>Paste the Bulk Import Form link</h2>
     <p class="body">If this supplier has a Bulk Import Form, paste the link below. Skips fine if there isn't one — this step is optional.</p>
 
@@ -941,7 +901,6 @@
 
   <!-- ─── STEP 10 — Multiple Billing Sheet link (OPTIONAL / SPLIT PAYOUTS) ───── -->
   <section class="slide" id="slide-10">
-    <span class="step-num optional">Step 10</span><span class="optional-pill">Optional · Split payouts</span>
     <h2>Multiple Billing Sheet (split-payout suppliers only)</h2>
     <p class="body">
       Only applies if the supplier <strong>manages all offers centrally</strong>, but the <strong>individual locations get paid out separately</strong> after the campaign. If that's the setup, they need to fill out the Multiple Billing template first.
@@ -1012,12 +971,6 @@
   <button class="float-cta-btn" id="floatCtaBtn" disabled>Continue</button>
   <div class="float-cta-hint" id="floatCtaHint"></div>
 </div>
-
-<!-- Preview-mode toggle (top-right corner) — temporary, removable later -->
-<button class="preview-toggle" id="previewToggle" onclick="togglePreviewMode()" title="Bypass gating to scroll through all steps">
-  <span class="dot-indicator"></span>
-  <span id="previewLabel">Preview mode: OFF</span>
-</button>
 
 <div class="progress" id="progressBar">
   <span class="progress-text" id="progressText">Start</span>
@@ -1222,41 +1175,24 @@
     refreshGate(5);
   }
 
-  // ─── Floating Continue button (replaces per-slide buttons) ──────
-  // Per-step config: label, action when clicked, gate function (returns true=enabled).
-  // Slides 0 (Hero) and 11 (Done) intentionally have no entry — button hides there.
+  // ─── Floating Continue button — always-enabled visual CTA ──────
+  // No gating — users can freely scroll/click through. Continue button
+  // is just the obvious primary CTA. Hidden on Hero (0) and Done (11).
   const STEP_CTAS = {
-    1:  { label: "I've sent the form",   action: () => unlockAndGo(2),  gate: () => true,
-          hint: "" },
-    2:  { label: "Continue",             action: () => unlockAndGo(3),  gate: () => !!(window._sopData.inputtedBy || '').trim(),
-          disabledHint: "Type your name to continue" },
-    3:  { label: "Continue",             action: () => unlockAndGo(4),  gate: () => !!(window._sopData.supplier || '').trim(),
-          disabledHint: "Type the company name to continue" },
-    4:  { label: "Top half confirmed",   action: () => unlockAndGo(5),  gate: () => true,
-          hint: "" },
-    5:  { label: "Continue",             action: () => unlockAndGo(6),  gate: () => ['yes','no'].includes(window._sopData.billcom),
-          disabledHint: "Click Yes or No to continue" },
-    6:  { label: "Names match",          action: () => unlockAndGo(7),  gate: () => true,
-          hint: "" },
-    7:  { label: "Continue",             action: () => unlockAndGo(8),  gate: () => {
-            const t = window._sopData.supplierType;
-            if (t === 'Supplier') return true;
-            if (t === 'Supplier - Venue') return !!(window._sopData.venueNotes || '').trim();
-            return false;
-          },
-          disabledHint: "Pick Supplier or Supplier - Venue to continue" },
-    8:  { label: "Continue",             action: () => unlockAndGo(9),  gate: () => window._step8Submitted === true,
-          disabledHint: "Click Submit (Step 8) before continuing" },
-    9:  { label: "Continue",             action: () => unlockAndGo(10), gate: () => true,
-          hint: "Optional — paste a link or leave blank" },
-    10: { label: "Finish",               action: () => finishAndGoToDone(), gate: () => true,
-          hint: "Optional — paste a link or leave blank" },
+    1:  { label: "I've sent the form", action: () => goTo(2),  hint: "" },
+    2:  { label: "Continue",           action: () => goTo(3),  hint: "" },
+    3:  { label: "Continue",           action: () => goTo(4),  hint: "" },
+    4:  { label: "Top half confirmed", action: () => goTo(5),  hint: "" },
+    5:  { label: "Continue",           action: () => goTo(6),  hint: "" },
+    6:  { label: "Names match",        action: () => goTo(7),  hint: "" },
+    7:  { label: "Continue",           action: () => goTo(8),  hint: "" },
+    8:  { label: "Continue",           action: () => goTo(9),  hint: "" },
+    9:  { label: "Continue",           action: () => goTo(10), hint: "Optional" },
+    10: { label: "Finish",             action: () => finishAndGoToDone(), hint: "Optional" },
   };
 
-  function refreshGate(slideIdx) {
-    // Backward-compat shim — just re-evaluates the floating button.
-    updateFloatingCta();
-  }
+  // Backward-compat shim — old inline calls still work
+  function refreshGate() { updateFloatingCta(); }
 
   function updateFloatingCta() {
     const cta = document.getElementById('floatCta');
@@ -1271,40 +1207,10 @@
       return;
     }
     cta.classList.add('shown');
-
-    // In preview mode, the button is always enabled (free scroll), label suffixed
-    const previewOn = window._previewMode === true;
-    const enabled = previewOn ? true : config.gate();
-
     btn.textContent = config.label;
     btn.onclick = config.action;
-    btn.disabled = !enabled;
-
-    if (hint) {
-      if (!enabled && config.disabledHint) hint.textContent = config.disabledHint;
-      else if (config.hint !== undefined) hint.textContent = config.hint;
-      else hint.textContent = '';
-    }
-  }
-
-  // ─── Preview mode (temporary — bypasses all gating so we can review) ───
-  function togglePreviewMode() {
-    window._previewMode = !window._previewMode;
-    localStorage.setItem('recess_sop_preview_mode', window._previewMode ? '1' : '0');
-    applyPreviewMode();
-  }
-
-  function applyPreviewMode() {
-    const toggle = document.getElementById('previewToggle');
-    const label = document.getElementById('previewLabel');
-    if (toggle) toggle.classList.toggle('on', window._previewMode);
-    if (label) label.textContent = 'Preview mode: ' + (window._previewMode ? 'ON' : 'OFF');
-    if (window._previewMode) {
-      // Unlock every slide so user can scroll through end-to-end
-      window._maxReached = TOTAL - 1;
-      updateLockedDots();
-    }
-    updateFloatingCta();
+    btn.disabled = false;
+    if (hint) hint.textContent = config.hint || '';
   }
 
   // ─── File upload handling (single zone, multiple files) ───
@@ -1431,47 +1337,28 @@
   // Backward movement is free.
 
   function goTo(i) {
-    // Block jumping past the unlocked frontier
-    if (i > window._maxReached) return;
     if (i < 0 || i >= TOTAL) return;
     deck.scrollTo({ left: i * window.innerWidth, behavior: 'smooth' });
   }
 
-  function unlockAndGo(target) {
-    if (target > window._maxReached) {
-      window._maxReached = target;
-      persistDraft();
-      updateLockedDots();
-    }
-    // Use raw scroll so we always advance even if maxReached check is in the way
-    deck.scrollTo({ left: target * window.innerWidth, behavior: 'smooth' });
-  }
+  // Kept as an alias for backward-compat with inline onclick handlers
+  function unlockAndGo(target) { goTo(target); }
 
-  // Special: clicking "Finish" on Step 10 advances to Done AND wipes the draft
+  // Clicking "Finish" on Step 10 advances to Done AND wipes the draft
   // so the next session starts fresh for the next vendor.
   function finishAndGoToDone() {
-    unlockAndGo(11);
-    // Delay the wipe slightly so localStorage write has settled
-    setTimeout(() => {
-      localStorage.removeItem(STORAGE_KEY);
-    }, 400);
+    goTo(11);
+    setTimeout(() => { localStorage.removeItem(STORAGE_KEY); }, 400);
   }
 
   function goBack() {
-    const next = Math.max(0, current() - 1);
-    deck.scrollTo({ left: next * window.innerWidth, behavior: 'smooth' });
+    goTo(Math.max(0, current() - 1));
   }
 
-  function dotClick(i) {
-    if (i > window._maxReached) return; // locked future
-    goTo(i);
-  }
+  function dotClick(i) { goTo(i); }
 
-  function updateLockedDots() {
-    document.querySelectorAll('.dot').forEach((d, idx) => {
-      d.classList.toggle('locked', idx > window._maxReached);
-    });
-  }
+  // No-op kept so other callers don't error out
+  function updateLockedDots() {}
 
   function update() {
     const i = current();
@@ -1493,15 +1380,6 @@
 
   // Restore any saved draft from localStorage on page load
   restoreDraft();
-
-  // Restore preview-mode preference. Also enable if ?preview=1 in URL.
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('preview') === '1' || localStorage.getItem('recess_sop_preview_mode') === '1') {
-    window._previewMode = true;
-  }
-  applyPreviewMode();
-
-  // Initial gate + button state
   updateFloatingCta();
   update();
 </script>
