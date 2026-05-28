@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Set Up a Referral — Supply</title>
+<style>
+  :root {
+    --teal: #13BAD5;
+    --teal-dark: #0A9AB5;
+    --ink: #0F1C2E;
+    --muted: #5A6675;
+    --bg: #F4F8FB;
+    --tip-bg: #E6F7F4;
+    --tip-border: #14B8A6;
+    --note-bg: #EBF4FE;
+    --note-border: #3B82F6;
+    --warn-bg: #FFF4E5;
+    --warn-border: #F59E0B;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased;
+  }
+
+  .deck {
+    display: flex; height: 100vh;
+    overflow-x: auto; overflow-y: hidden;
+    scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  }
+  .deck::-webkit-scrollbar { display: none; }
+  .slide {
+    flex: 0 0 100vw; height: 100vh;
+    scroll-snap-align: start;
+    padding: 36px 80px 90px;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+  }
+  .slide > * { max-width: 720px; }
+
+  .slide.hero {
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-dark) 100%);
+    color: white;
+  }
+  .slide.hero .label {
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    opacity: 0.85; margin-bottom: 16px;
+  }
+  .slide.hero h1 {
+    font-size: clamp(40px, 6vw, 78px);
+    font-weight: 800; line-height: 1.05;
+    margin-bottom: 24px; max-width: 900px;
+  }
+  .slide.hero p.purpose {
+    font-size: clamp(17px, 1.8vw, 22px);
+    max-width: 720px; opacity: 0.95;
+    margin-bottom: 40px; line-height: 1.5;
+  }
+  .start-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: white; color: var(--teal-dark);
+    padding: 18px 36px; border-radius: 4px;
+    font-size: 18px; font-weight: 700; text-decoration: none;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    transition: transform 0.15s; cursor: pointer; border: none;
+    font-family: inherit;
+  }
+  .start-btn:hover { transform: translateY(-2px); }
+  .start-btn::after { content: "→"; font-size: 22px; }
+
+  .resume-banner {
+    display: none;
+    align-items: center; gap: 12px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.4);
+    padding: 10px 14px 10px 18px;
+    border-radius: 3px;
+    font-size: 13px; margin-top: 24px;
+    color: white; backdrop-filter: blur(6px);
+  }
+  .resume-banner.shown { display: inline-flex; }
+  .resume-clear {
+    background: rgba(255,255,255,0.25);
+    color: white; border: none;
+    padding: 6px 12px; border-radius: 3px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    transition: background 0.15s; font-family: inherit;
+  }
+  .resume-clear:hover { background: rgba(255,255,255,0.45); }
+
+  .slide h2 {
+    font-size: clamp(24px, 3.4vw, 42px);
+    font-weight: 800; line-height: 1.15;
+    margin-bottom: 16px; max-width: 800px;
+  }
+  .slide .body {
+    font-size: clamp(14px, 1.2vw, 17px);
+    color: var(--muted);
+    margin-bottom: 18px; max-width: 620px; line-height: 1.45;
+  }
+
+  .btn-link {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--teal); color: white;
+    padding: 13px 24px; border-radius: 3px;
+    font-size: 15px; font-weight: 700; text-decoration: none;
+    box-shadow: 0 4px 14px rgba(19,186,213,0.22);
+    transition: transform 0.15s, background 0.15s;
+    margin-bottom: 6px;
+  }
+  .btn-link:hover { background: var(--teal-dark); transform: translateY(-1px); }
+  .btn-link::after { content: "↗"; font-size: 17px; }
+
+  .callout {
+    border-left: 5px solid; padding: 11px 16px;
+    border-radius: 3px; font-size: 13.5px;
+    max-width: 600px; text-align: left;
+    margin-top: 12px; line-height: 1.45;
+  }
+  .callout .label-bold { font-weight: 800; margin-right: 6px; }
+  .tip  { background: var(--tip-bg);  border-color: var(--tip-border);  color: #115E59; }
+  .note { background: var(--note-bg); border-color: var(--note-border); color: #1E40AF; }
+  .warn { background: var(--warn-bg); border-color: var(--warn-border); color: #92400E; }
+
+  /* selectable choice cards */
+  .choice-row {
+    display: flex; gap: 16px;
+    max-width: 780px; width: 100%;
+    margin-top: 6px;
+  }
+  .choice-card {
+    flex: 1;
+    background: white;
+    border: 2px solid #E5E7EB;
+    border-radius: 4px;
+    padding: 18px 16px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .choice-card:hover {
+    border-color: var(--teal);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(19,186,213,0.10);
+  }
+  .choice-card.selected {
+    border-color: var(--teal);
+    background: var(--tip-bg);
+    box-shadow: 0 6px 18px rgba(19,186,213,0.20);
+  }
+  .choice-card.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 10px; right: 12px;
+    background: var(--teal);
+    color: white;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px;
+  }
+  .choice-title { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 6px; }
+  .choice-desc  { font-size: 13px; color: var(--muted); line-height: 1.45; }
+  @media (max-width: 700px) {
+    .choice-row { flex-direction: column; }
+  }
+
+  /* placeholder slate for steps not yet built */
+  .placeholder {
+    background: #FAFBFC;
+    border: 2px dashed #CBD5E1;
+    border-radius: 4px;
+    padding: 22px 24px;
+    max-width: 580px; width: 100%;
+    color: var(--muted);
+    font-size: 13.5px;
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+  .placeholder strong { color: var(--ink); }
+
+  .slide.final {
+    background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+    color: white;
+  }
+  .slide.final h2 { color: white; }
+  .slide.final .body { color: rgba(255,255,255,0.95); }
+
+  .nav-arrow {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    width: 48px; height: 48px; background: white;
+    border-radius: 3px; box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 28px; font-weight: 700;
+    color: var(--teal-dark); transition: transform 0.15s, opacity 0.15s;
+    z-index: 100; border: none;
+  }
+  .nav-arrow:hover { transform: translateY(-50%) scale(1.08); }
+  .nav-arrow.disabled { opacity: 0.25; cursor: default; }
+  .nav-arrow.left  { left: 24px; }
+
+  /* floating CTA + progress cluster */
+  .float-cta {
+    position: fixed;
+    right: 28px; top: 50%;
+    transform: translateY(-50%);
+    z-index: 200;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .float-cta.shown { display: flex; }
+  .float-cta-btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 10px;
+    background: var(--teal); color: white;
+    padding: 16px 26px;
+    border-radius: 3px; border: none;
+    font-size: 15px; font-weight: 800; cursor: pointer;
+    box-shadow: 0 12px 32px rgba(19,186,213,0.35);
+    transition: all 0.15s; font-family: inherit;
+    min-width: 160px;
+    animation: ctaPulse 2.4s ease-in-out infinite;
+  }
+  .float-cta-btn:hover:not(:disabled) {
+    background: var(--teal-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(19,186,213,0.45);
+  }
+  .float-cta-btn::after { content: "→"; font-size: 20px; }
+  .float-cta-btn:disabled {
+    background: #CBD5E1; color: #64748B;
+    cursor: not-allowed; animation: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+  }
+  .float-cta-hint {
+    font-size: 11px; color: var(--muted);
+    text-align: center; margin-top: 4px;
+    font-style: italic; max-width: 200px; min-height: 16px;
+  }
+  @keyframes ctaPulse {
+    0%, 100% { box-shadow: 0 12px 32px rgba(19,186,213,0.35); }
+    50%      { box-shadow: 0 12px 32px rgba(19,186,213,0.55), 0 0 0 6px rgba(19,186,213,0.10); }
+  }
+
+  .dots-row {
+    display: flex; gap: 6px;
+    margin-top: 14px; padding: 8px 4px;
+    justify-content: center;
+  }
+  .progress-text-row {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 2px; font-size: 10px;
+  }
+  .progress-text-row .progress-text {
+    font-weight: 700; color: var(--muted);
+    letter-spacing: 0.10em; text-transform: uppercase;
+  }
+  .autosave-tag {
+    font-size: 10px; color: #94A3B8;
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .autosave-tag.shown { opacity: 1; }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #E5E7EB; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .dot.active { background: var(--teal); transform: scale(1.5); }
+  .dot:hover { background: var(--teal-dark); }
+  .dot.final-dot { background: #A7F3D0; }
+  .dot.final-dot.active { background: #047857; }
+  .dot.final-dot:hover { background: #059669; }
+
+  @media (max-width: 1200px) {
+    .slide { padding: 36px 32px 140px; }
+    .float-cta {
+      right: 50%; top: auto; bottom: 24px;
+      transform: translateX(50%);
+    }
+    .dots-row { margin-top: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- ─── HERO ─────────────────────────────── -->
+  <section class="slide hero" id="slide-0">
+    <div class="label">Supply Ops · SOP</div>
+    <h1>How to Set Up a Referral</h1>
+    <p class="purpose">Onboard a new referrer or log a new referral lead so commissions get tracked correctly and the referrer gets paid.</p>
+    <button class="start-btn" onclick="goTo(1)">Start</button>
+    <div class="resume-banner" id="resume-banner">
+      <span>💾 Resuming your draft from <strong id="resume-time">—</strong></span>
+      <button class="resume-clear" onclick="confirmClearDraft()">Clear progress</button>
+    </div>
+  </section>
+
+  <!-- ─── STEP 1 — Branch: onboard vs log ─────────── -->
+  <section class="slide" id="slide-1">
+    <h2>Which one are you doing today?</h2>
+    <p class="body">The flow branches based on what you're here for. Pick the one that matches.</p>
+    <div class="choice-row">
+      <div class="choice-card" id="choice-onboard" onclick="selectReferralMode('onboard')">
+        <div class="choice-title">Onboarding a new referrer</div>
+        <div class="choice-desc">First-time setup. Someone new is joining the referral program — capture their info, set their commission terms, get them into the system.</div>
+      </div>
+      <div class="choice-card" id="choice-log" onclick="selectReferralMode('log')">
+        <div class="choice-title">Logging a new referral lead</div>
+        <div class="choice-desc">An existing referrer brought in a new supplier or lead. Tag the attribution, link them in the tracker, route the supplier to onboarding.</div>
+      </div>
+    </div>
+    <div class="placeholder">
+      Once you pick a branch above, <strong>the rest of the steps get built next</strong>. Feed Claude one step at a time and the next slides slot in here. The branch you picked will determine which path of steps you walk through.
+    </div>
+  </section>
+
+  <!-- ─── FINAL — Done placeholder ─────────────── -->
+  <section class="slide final" id="slide-final">
+    <h2>Done — referral set up</h2>
+    <p class="body">Placeholder. Once the branches are built out, this slide will summarize what got captured and where it landed.</p>
+  </section>
+
+</div>
+
+<button class="nav-arrow left disabled" id="navLeft" onclick="goBack()" title="Go back">‹</button>
+
+<div class="float-cta" id="floatCta">
+  <button class="float-cta-btn" id="floatCtaBtn" disabled>Continue</button>
+  <div class="float-cta-hint" id="floatCtaHint"></div>
+  <div class="dots-row" id="dotsRow">
+    <span class="dot active" data-i="0" onclick="dotClick(0)"></span>
+    <span class="dot" data-i="1" onclick="dotClick(1)"></span>
+    <span class="dot final-dot" data-i="2" onclick="dotClick(2)" title="Done"></span>
+  </div>
+  <div class="progress-text-row">
+    <span class="progress-text" id="progressText">Start</span>
+    <span class="autosave-tag" id="autosave-tag">✓ auto-saved</span>
+  </div>
+</div>
+
+<script>
+  const deck = document.getElementById('deck');
+  const navLeft = document.getElementById('navLeft');
+  const progText = document.getElementById('progressText');
+  const LABELS = ['Start', 'Step 1', 'Done'];
+  const TOTAL = LABELS.length;
+  const STORAGE_KEY = 'recess_referral_sop_draft';
+
+  // ─── Form data capture + auto-save ──────────
+  window._sopData = {};
+
+  function saveField(key, value) {
+    window._sopData[key] = (value || '').trim();
+    persistDraft();
+  }
+
+  function persistDraft() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        data: window._sopData,
+        savedAt: new Date().toISOString(),
+      }));
+      flashAutosave();
+    } catch (e) {
+      console.warn('[Referral SOP] localStorage write failed:', e);
+    }
+  }
+
+  function flashAutosave() {
+    const tag = document.getElementById('autosave-tag');
+    if (!tag) return;
+    tag.classList.add('shown');
+    clearTimeout(window._t_autosave);
+    window._t_autosave = setTimeout(() => tag.classList.remove('shown'), 1200);
+  }
+
+  function loadDraft() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  function restoreDraft() {
+    const draft = loadDraft();
+    if (!draft || !draft.data || Object.keys(draft.data).length === 0) return;
+    window._sopData = draft.data;
+
+    // Restore branch choice
+    if (window._sopData.referralMode) {
+      const onb = document.getElementById('choice-onboard');
+      const log = document.getElementById('choice-log');
+      if (onb) onb.classList.toggle('selected', window._sopData.referralMode === 'onboard');
+      if (log) log.classList.toggle('selected', window._sopData.referralMode === 'log');
+    }
+
+    // Show the resume banner on cover
+    const banner = document.getElementById('resume-banner');
+    const timeEl = document.getElementById('resume-time');
+    if (banner && timeEl && draft.savedAt) {
+      const when = new Date(draft.savedAt);
+      timeEl.textContent = when.toLocaleString('en-US', {
+        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+      });
+      banner.classList.add('shown');
+    }
+  }
+
+  function clearDraft() {
+    localStorage.removeItem(STORAGE_KEY);
+    window._sopData = {};
+    ['choice-onboard', 'choice-log'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('selected');
+    });
+    const banner = document.getElementById('resume-banner');
+    if (banner) banner.classList.remove('shown');
+    goTo(0);
+  }
+
+  function confirmClearDraft() {
+    if (confirm('Clear your saved draft and start over?')) clearDraft();
+  }
+
+  // ─── Step 1 branch decision ──────────
+  function selectReferralMode(mode) {
+    saveField('referralMode', mode);
+    const onb = document.getElementById('choice-onboard');
+    const log = document.getElementById('choice-log');
+    if (onb) onb.classList.toggle('selected', mode === 'onboard');
+    if (log) log.classList.toggle('selected', mode === 'log');
+  }
+
+  // ─── Floating Continue button ──────────
+  const STEP_CTAS = {
+    1: { label: "Continue", action: () => goTo(2), hint: "" },
+    // More steps slot in here as the user dictates content
+  };
+
+  function updateFloatingCta() {
+    const cta = document.getElementById('floatCta');
+    const btn = document.getElementById('floatCtaBtn');
+    const hint = document.getElementById('floatCtaHint');
+    if (!cta || !btn) return;
+    const i = current();
+    const config = STEP_CTAS[i];
+    if (!config) {
+      cta.classList.remove('shown');
+      return;
+    }
+    cta.classList.add('shown');
+    btn.textContent = config.label;
+    btn.onclick = config.action;
+    btn.disabled = false;
+    if (hint) hint.textContent = config.hint || '';
+  }
+
+  // ─── Navigation ──────────
+  function current() { return Math.round(deck.scrollLeft / window.innerWidth); }
+  function goTo(i) {
+    if (i < 0 || i >= TOTAL) return;
+    deck.scrollTo({ left: i * window.innerWidth, behavior: 'smooth' });
+  }
+  function goBack() { goTo(Math.max(0, current() - 1)); }
+  function dotClick(i) { goTo(i); }
+
+  function update() {
+    const i = current();
+    document.querySelectorAll('.dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
+    progText.textContent = LABELS[i] || ('Step ' + i);
+    navLeft.classList.toggle('disabled', i === 0);
+    updateFloatingCta();
+  }
+
+  deck.addEventListener('scroll', () => requestAnimationFrame(update));
+  window.addEventListener('resize', update);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') goBack();
+  });
+
+  restoreDraft();
+  updateFloatingCta();
+  update();
+</script>
+
+</body>
+</html>
