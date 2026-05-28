@@ -36,10 +36,11 @@
   .slide {
     flex: 0 0 100vw; height: 100vh;
     scroll-snap-align: start;
-    padding: 60px 80px 100px;
+    padding: 36px 240px 90px 60px;   /* big right padding leaves room for floating Continue */
     display: flex; flex-direction: column;
     justify-content: center; align-items: center; text-align: center;
   }
+  .slide > * { max-width: 800px; }
 
   /* hero */
   .slide.hero {
@@ -111,39 +112,39 @@
   /* steps */
   .step-num {
     display: inline-block; background: var(--teal); color: white;
-    font-weight: 800; font-size: 13px;
+    font-weight: 800; font-size: 11px;
     letter-spacing: 0.12em;
-    padding: 7px 18px; border-radius: 999px;
-    margin-bottom: 28px; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 999px;
+    margin-bottom: 14px; text-transform: uppercase;
   }
   .slide h2 {
-    font-size: clamp(34px, 4.8vw, 60px);
-    font-weight: 800; line-height: 1.1;
-    margin-bottom: 24px; max-width: 950px;
+    font-size: clamp(24px, 3.4vw, 42px);
+    font-weight: 800; line-height: 1.15;
+    margin-bottom: 16px; max-width: 800px;
   }
   .slide .body {
-    font-size: clamp(17px, 1.5vw, 20px);
+    font-size: clamp(14px, 1.2vw, 17px);
     color: var(--muted);
-    margin-bottom: 28px; max-width: 680px; line-height: 1.5;
+    margin-bottom: 18px; max-width: 620px; line-height: 1.45;
   }
 
   .btn-link {
-    display: inline-flex; align-items: center; gap: 12px;
+    display: inline-flex; align-items: center; gap: 10px;
     background: var(--teal); color: white;
-    padding: 18px 36px; border-radius: 12px;
-    font-size: 18px; font-weight: 700; text-decoration: none;
-    box-shadow: 0 6px 20px rgba(19,186,213,0.25);
+    padding: 13px 24px; border-radius: 10px;
+    font-size: 15px; font-weight: 700; text-decoration: none;
+    box-shadow: 0 4px 14px rgba(19,186,213,0.22);
     transition: transform 0.15s, background 0.15s;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
   .btn-link:hover { background: var(--teal-dark); transform: translateY(-1px); }
-  .btn-link::after { content: "↗"; font-size: 20px; }
+  .btn-link::after { content: "↗"; font-size: 17px; }
 
   .callout {
-    border-left: 6px solid; padding: 18px 24px;
-    border-radius: 10px; font-size: 16px;
-    max-width: 640px; text-align: left;
-    margin-top: 18px;
+    border-left: 5px solid; padding: 11px 16px;
+    border-radius: 8px; font-size: 13.5px;
+    max-width: 600px; text-align: left;
+    margin-top: 12px; line-height: 1.45;
   }
   .callout .label-bold { font-weight: 800; margin-right: 6px; }
   .tip  { background: var(--tip-bg);  border-color: var(--tip-border);  color: #115E59; }
@@ -151,63 +152,64 @@
   .warn { background: var(--warn-bg); border-color: var(--warn-border); color: #92400E; }
 
   /* branches */
-  .branch { display: flex; gap: 28px; margin-top: 30px; max-width: 880px; width: 100%; }
+  .branch { display: flex; gap: 18px; margin-top: 16px; max-width: 820px; width: 100%; }
   .branch-card {
-    flex: 1; border: 3px solid; border-radius: 14px;
-    padding: 24px; text-align: left; background: white;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.05);
+    flex: 1; border: 2px solid; border-radius: 12px;
+    padding: 16px 18px; text-align: left; background: white;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+    font-size: 13.5px;
   }
   .branch-card.yes { border-color: var(--tip-border); }
   .branch-card.no  { border-color: var(--warn-border); }
   .branch-condition {
-    font-weight: 800; font-size: 14px;
+    font-weight: 800; font-size: 12px;
     text-transform: uppercase; letter-spacing: 0.06em;
-    margin-bottom: 12px;
+    margin-bottom: 8px;
   }
   .branch-card.yes .branch-condition { color: #047857; }
   .branch-card.no .branch-condition  { color: #B45309; }
-  .branch-then { font-size: 17px; color: var(--ink); line-height: 1.5; }
-  .branch-then ul { margin: 8px 0 0 18px; padding: 0; }
-  .branch-then li { margin-bottom: 4px; }
+  .branch-then { font-size: 13.5px; color: var(--ink); line-height: 1.45; }
+  .branch-then ul { margin: 6px 0 0 16px; padding: 0; }
+  .branch-then li { margin-bottom: 3px; }
 
   /* alignment-rule (= match) */
   .match-row {
-    display: flex; align-items: stretch; gap: 18px;
-    max-width: 1100px; width: 100%;
-    margin-top: 24px;
+    display: flex; align-items: stretch; gap: 12px;
+    max-width: 920px; width: 100%;
+    margin-top: 14px;
   }
   .match-side {
     flex: 1; background: white;
-    border: 3px solid var(--teal);
-    border-radius: 16px;
-    padding: 28px 24px;
+    border: 2px solid var(--teal);
+    border-radius: 12px;
+    padding: 16px 14px;
     text-align: center;
-    box-shadow: 0 6px 20px rgba(19,186,213,0.10);
+    box-shadow: 0 4px 14px rgba(19,186,213,0.10);
   }
   .match-side .where {
-    font-size: 13px; font-weight: 800;
+    font-size: 11px; font-weight: 800;
     color: var(--muted);
     letter-spacing: 0.10em; text-transform: uppercase;
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
   .match-side .field {
-    font-size: 22px; font-weight: 800;
+    font-size: 16px; font-weight: 800;
     color: var(--ink);
-    margin-bottom: 8px;
+    margin-bottom: 5px;
   }
   .match-side .sample {
     font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-    font-size: 15px;
+    font-size: 12.5px;
     background: #F1F5F9;
     color: var(--ink);
-    padding: 8px 14px;
-    border-radius: 8px;
+    padding: 5px 10px;
+    border-radius: 6px;
     display: inline-block;
-    margin-top: 6px;
+    margin-top: 4px;
   }
   .match-equals {
     display: flex; align-items: center;
-    font-size: 60px; font-weight: 800;
+    font-size: 38px; font-weight: 800;
     color: var(--teal);
     line-height: 1;
   }
@@ -270,23 +272,23 @@
   }
 
   /* ─── form input field ──────────────────── */
-  .input-block { width: 100%; max-width: 540px; margin-top: 12px; }
+  .input-block { width: 100%; max-width: 460px; margin-top: 6px; }
   .input-label {
     display: block;
-    font-size: 13px; font-weight: 800;
+    font-size: 11px; font-weight: 800;
     color: var(--muted);
     letter-spacing: 0.08em; text-transform: uppercase;
-    margin-bottom: 10px;
+    margin-bottom: 7px;
     text-align: left;
   }
   .sop-input {
     width: 100%;
-    padding: 18px 22px;
-    font-size: 22px;
+    padding: 12px 16px;
+    font-size: 17px;
     font-family: inherit;
     color: var(--ink);
-    border: 3px solid #E5E7EB;
-    border-radius: 14px;
+    border: 2px solid #E5E7EB;
+    border-radius: 10px;
     background: white;
     transition: border-color 0.15s, box-shadow 0.15s;
     outline: none;
@@ -360,16 +362,16 @@
 
   /* ─── selectable choice cards ─────────── */
   .choice-row {
-    display: flex; gap: 24px;
-    max-width: 900px; width: 100%;
-    margin-top: 12px;
+    display: flex; gap: 16px;
+    max-width: 780px; width: 100%;
+    margin-top: 6px;
   }
   .choice-card {
     flex: 1;
     background: white;
-    border: 3px solid #E5E7EB;
-    border-radius: 16px;
-    padding: 28px 24px;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 18px 16px;
     text-align: left;
     cursor: pointer;
     transition: all 0.15s;
@@ -378,32 +380,32 @@
   .choice-card:hover {
     border-color: var(--teal);
     transform: translateY(-2px);
-    box-shadow: 0 8px 24px rgba(19,186,213,0.10);
+    box-shadow: 0 6px 18px rgba(19,186,213,0.10);
   }
   .choice-card.selected {
     border-color: var(--teal);
     background: var(--tip-bg);
-    box-shadow: 0 8px 24px rgba(19,186,213,0.20);
+    box-shadow: 0 6px 18px rgba(19,186,213,0.20);
   }
   .choice-card.selected::after {
     content: "✓";
     position: absolute;
-    top: 12px; right: 16px;
+    top: 10px; right: 12px;
     background: var(--teal);
     color: white;
-    width: 28px; height: 28px;
+    width: 22px; height: 22px;
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 16px;
+    font-weight: 800; font-size: 13px;
   }
   .choice-title {
-    font-size: 22px; font-weight: 800;
+    font-size: 16px; font-weight: 800;
     color: var(--ink);
-    margin-bottom: 10px;
+    margin-bottom: 6px;
   }
   .choice-desc {
-    font-size: 15px; color: var(--muted);
-    line-height: 1.5;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.45;
   }
 
   /* expandable section that appears on selection */
@@ -439,26 +441,26 @@
 
   /* ─── File upload zone (single, multi-file) ─── */
   .upload-zone {
-    width: 100%; max-width: 720px;
+    width: 100%; max-width: 600px;
     background: white;
-    border: 3px dashed #CBD5E1;
-    border-radius: 16px;
-    padding: 42px 28px;
+    border: 2.5px dashed #CBD5E1;
+    border-radius: 12px;
+    padding: 26px 22px;
     text-align: center;
     cursor: pointer;
     transition: all 0.15s;
-    margin-top: 8px;
+    margin-top: 4px;
   }
   .upload-zone:hover { border-color: var(--teal); background: #F0FDFA; }
   .upload-zone.dragover { border-color: var(--teal); background: var(--tip-bg); border-style: solid; }
   .upload-zone.has-file { border-color: var(--tip-border); background: var(--tip-bg); border-style: solid; }
   .upload-zone input[type="file"] { display: none; }
-  .upload-icon { font-size: 48px; margin-bottom: 14px; }
+  .upload-icon { font-size: 36px; margin-bottom: 8px; }
   .upload-label {
-    font-size: 18px; font-weight: 700;
-    color: var(--ink); margin-bottom: 4px;
+    font-size: 15px; font-weight: 700;
+    color: var(--ink); margin-bottom: 3px;
   }
-  .upload-hint { font-size: 13px; color: var(--muted); }
+  .upload-hint { font-size: 12px; color: var(--muted); }
   .file-list {
     margin-top: 18px;
     text-align: left;
@@ -483,14 +485,14 @@
   .file-list .remove-file:hover { color: #B91C1C; }
 
   .btn-submit {
-    margin-top: 24px;
+    margin-top: 14px;
     background: var(--teal);
     color: white;
-    padding: 18px 36px;
-    border-radius: 12px;
-    font-size: 17px; font-weight: 700;
+    padding: 12px 26px;
+    border-radius: 10px;
+    font-size: 15px; font-weight: 700;
     border: none; cursor: pointer;
-    box-shadow: 0 6px 20px rgba(19,186,213,0.25);
+    box-shadow: 0 4px 14px rgba(19,186,213,0.22);
     transition: all 0.15s;
   }
   .btn-submit:hover:not(:disabled) {
@@ -511,49 +513,113 @@
   .upload-status.success { color: #047857; font-weight: 700; }
   .upload-status.error   { color: #B91C1C; font-weight: 700; }
 
-  /* ─── Continue button (gateway between steps) ─── */
-  .continue-row {
-    margin-top: 32px;
-    display: flex;
-    justify-content: center;
-    width: 100%;
+  /* ─── In-step Continue containers (now unused — kept hidden) ─── */
+  .continue-row { display: none !important; }
+
+  /* ─── Floating Continue button (fixed, right-side, vertically centered) ─── */
+  .float-cta {
+    position: fixed;
+    right: 28px; top: 50%;
+    transform: translateY(-50%);
+    z-index: 200;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
   }
-  .continue-btn {
+  .float-cta.shown { display: flex; }
+  .float-cta-label {
+    text-align: center;
+    font-size: 11px; font-weight: 700;
+    color: var(--muted);
+    letter-spacing: 0.08em; text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .float-cta-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     background: var(--teal);
     color: white;
-    padding: 16px 36px;
-    border-radius: 999px;
+    padding: 16px 26px;
+    border-radius: 14px;
     border: none;
-    font-size: 17px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 800;
     cursor: pointer;
-    box-shadow: 0 8px 24px rgba(19,186,213,0.30);
+    box-shadow: 0 12px 32px rgba(19,186,213,0.35);
     transition: all 0.15s;
     font-family: inherit;
+    min-width: 180px;
+    animation: ctaPulse 2.4s ease-in-out infinite;
   }
-  .continue-btn:hover:not(:disabled) {
+  .float-cta-btn:hover:not(:disabled) {
     background: var(--teal-dark);
     transform: translateY(-2px);
-    box-shadow: 0 12px 28px rgba(19,186,213,0.40);
+    box-shadow: 0 16px 36px rgba(19,186,213,0.45);
   }
-  .continue-btn::after { content: "→"; font-size: 20px; }
-  .continue-btn:disabled {
+  .float-cta-btn::after { content: "→"; font-size: 20px; }
+  .float-cta-btn:disabled {
     background: #CBD5E1;
-    color: #94A3B8;
+    color: #64748B;
     cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+    animation: none;
   }
-  .continue-btn:disabled::after { color: #94A3B8; }
-  .continue-hint {
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 10px;
+  .float-cta-hint {
+    font-size: 11px; color: var(--muted);
+    text-align: center;
+    margin-top: 4px;
     font-style: italic;
+    max-width: 200px;
+    min-height: 16px;
   }
+  @keyframes ctaPulse {
+    0%, 100% { box-shadow: 0 12px 32px rgba(19,186,213,0.35); }
+    50%      { box-shadow: 0 12px 32px rgba(19,186,213,0.55), 0 0 0 6px rgba(19,186,213,0.10); }
+  }
+
+  /* On narrower viewports, move the CTA to bottom-center so it doesn't fight content */
+  @media (max-width: 900px) {
+    .slide { padding: 36px 32px 120px; }
+    .float-cta {
+      right: 50%; top: auto; bottom: 70px;
+      transform: translateX(50%);
+    }
+  }
+
+  /* ─── Preview-mode toggle (top-right) ─── */
+  .preview-toggle {
+    position: fixed;
+    top: 14px; right: 18px;
+    z-index: 300;
+    background: white;
+    border: 1px solid #E5E7EB;
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    transition: all 0.15s;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .preview-toggle:hover { background: #F8FAFC; color: var(--ink); }
+  .preview-toggle.on {
+    background: #FEF3C7;
+    border-color: #FBBF24;
+    color: #92400E;
+  }
+  .preview-toggle .dot-indicator {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: #CBD5E1;
+  }
+  .preview-toggle.on .dot-indicator { background: #F59E0B; }
 
   /* ─── Locked progress dot (future steps not yet unlocked) ─── */
   .dot.locked {
@@ -953,6 +1019,19 @@
 
 <button class="nav-arrow left disabled" id="navLeft" onclick="goBack()" title="Go back">‹</button>
 
+<!-- Floating "click here to proceed" CTA (right-side, vertically centered) -->
+<div class="float-cta" id="floatCta">
+  <div class="float-cta-label">Click here to continue</div>
+  <button class="float-cta-btn" id="floatCtaBtn" disabled>Continue</button>
+  <div class="float-cta-hint" id="floatCtaHint"></div>
+</div>
+
+<!-- Preview-mode toggle (top-right corner) — temporary, removable later -->
+<button class="preview-toggle" id="previewToggle" onclick="togglePreviewMode()" title="Bypass gating to scroll through all steps">
+  <span class="dot-indicator"></span>
+  <span id="previewLabel">Preview mode: OFF</span>
+</button>
+
 <div class="progress" id="progressBar">
   <span class="progress-text" id="progressText">Start</span>
   <span class="autosave-tag" id="autosave-tag">✓ auto-saved</span>
@@ -993,6 +1072,7 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         data: window._sopData,
         maxReached: window._maxReached,
+        step8Submitted: window._step8Submitted === true,
         savedAt: new Date().toISOString(),
       }));
       flashAutosave();
@@ -1022,6 +1102,9 @@
     window._sopData = draft.data;
     if (typeof draft.maxReached === 'number') {
       window._maxReached = draft.maxReached;
+    }
+    if (draft.step8Submitted === true) {
+      window._step8Submitted = true;
     }
 
     // Restore each text input
@@ -1081,6 +1164,7 @@
     window._sopData = {};
     window._sopFiles = [];
     window._maxReached = 0;
+    window._step8Submitted = false;
     // Blank text inputs + textareas
     document.querySelectorAll('.sop-input, .sop-textarea').forEach(el => el.value = '');
     // Unselect supplier-type cards + hide reveal
@@ -1151,32 +1235,89 @@
     refreshGate(5);
   }
 
-  // ─── Continue-button gating logic ──────────────────────────
-  // Re-evaluates whether the Continue button on a specific slide should be enabled.
+  // ─── Floating Continue button (replaces per-slide buttons) ──────
+  // Per-step config: label, action when clicked, gate function (returns true=enabled).
+  // Slides 0 (Hero) and 11 (Done) intentionally have no entry — button hides there.
+  const STEP_CTAS = {
+    1:  { label: "I've sent the form",   action: () => unlockAndGo(2),  gate: () => true,
+          hint: "" },
+    2:  { label: "Continue",             action: () => unlockAndGo(3),  gate: () => !!(window._sopData.inputtedBy || '').trim(),
+          disabledHint: "Type your name to continue" },
+    3:  { label: "Continue",             action: () => unlockAndGo(4),  gate: () => !!(window._sopData.supplier || '').trim(),
+          disabledHint: "Type the company name to continue" },
+    4:  { label: "Top half confirmed",   action: () => unlockAndGo(5),  gate: () => true,
+          hint: "" },
+    5:  { label: "Continue",             action: () => unlockAndGo(6),  gate: () => ['yes','no'].includes(window._sopData.billcom),
+          disabledHint: "Click Yes or No to continue" },
+    6:  { label: "Names match",          action: () => unlockAndGo(7),  gate: () => true,
+          hint: "" },
+    7:  { label: "Continue",             action: () => unlockAndGo(8),  gate: () => {
+            const t = window._sopData.supplierType;
+            if (t === 'Supplier') return true;
+            if (t === 'Supplier - Venue') return !!(window._sopData.venueNotes || '').trim();
+            return false;
+          },
+          disabledHint: "Pick Supplier or Supplier - Venue to continue" },
+    8:  { label: "Continue",             action: () => unlockAndGo(9),  gate: () => window._step8Submitted === true,
+          disabledHint: "Click Submit (Step 8) before continuing" },
+    9:  { label: "Continue",             action: () => unlockAndGo(10), gate: () => true,
+          hint: "Optional — paste a link or leave blank" },
+    10: { label: "Finish",               action: () => finishAndGoToDone(), gate: () => true,
+          hint: "Optional — paste a link or leave blank" },
+  };
+
   function refreshGate(slideIdx) {
-    const btn = document.getElementById('cont-' + slideIdx);
-    if (!btn) return;
-    let ok = false;
-    if (slideIdx === 2) {
-      ok = !!(window._sopData.inputtedBy || '').trim();
-    } else if (slideIdx === 3) {
-      ok = !!(window._sopData.supplier || '').trim();
-    } else if (slideIdx === 5) {
-      ok = window._sopData.billcom === 'yes' || window._sopData.billcom === 'no';
-    } else if (slideIdx === 7) {
-      const type = window._sopData.supplierType;
-      if (type === 'Supplier') ok = true;
-      else if (type === 'Supplier - Venue') {
-        ok = !!(window._sopData.venueNotes || '').trim();
-        const hint = document.getElementById('cont-7-hint');
-        if (hint) hint.textContent = ok ? '' : 'Add venue-split notes to continue';
-      } else {
-        ok = false;
-      }
-    } else {
-      ok = true; // non-gated steps
+    // Backward-compat shim — just re-evaluates the floating button.
+    updateFloatingCta();
+  }
+
+  function updateFloatingCta() {
+    const cta = document.getElementById('floatCta');
+    const btn = document.getElementById('floatCtaBtn');
+    const hint = document.getElementById('floatCtaHint');
+    if (!cta || !btn) return;
+
+    const i = current();
+    const config = STEP_CTAS[i];
+    if (!config) {
+      cta.classList.remove('shown');
+      return;
     }
-    btn.disabled = !ok;
+    cta.classList.add('shown');
+
+    // In preview mode, the button is always enabled (free scroll), label suffixed
+    const previewOn = window._previewMode === true;
+    const enabled = previewOn ? true : config.gate();
+
+    btn.textContent = config.label;
+    btn.onclick = config.action;
+    btn.disabled = !enabled;
+
+    if (hint) {
+      if (!enabled && config.disabledHint) hint.textContent = config.disabledHint;
+      else if (config.hint !== undefined) hint.textContent = config.hint;
+      else hint.textContent = '';
+    }
+  }
+
+  // ─── Preview mode (temporary — bypasses all gating so we can review) ───
+  function togglePreviewMode() {
+    window._previewMode = !window._previewMode;
+    localStorage.setItem('recess_sop_preview_mode', window._previewMode ? '1' : '0');
+    applyPreviewMode();
+  }
+
+  function applyPreviewMode() {
+    const toggle = document.getElementById('previewToggle');
+    const label = document.getElementById('previewLabel');
+    if (toggle) toggle.classList.toggle('on', window._previewMode);
+    if (label) label.textContent = 'Preview mode: ' + (window._previewMode ? 'ON' : 'OFF');
+    if (window._previewMode) {
+      // Unlock every slide so user can scroll through end-to-end
+      window._maxReached = TOTAL - 1;
+      updateLockedDots();
+    }
+    updateFloatingCta();
   }
 
   // ─── File upload handling (single zone, multiple files) ───
@@ -1232,9 +1373,9 @@
       status.innerHTML = '⚙️ Backend not wired yet — Apps Script webhook URL will go here. <br>For now, click <a href="https://drive.google.com/drive/u/0/folders/1TMr39s4aoGMiBmhjCJte7cl01TKmV6Wr" target="_blank">the Drive</a> and upload manually.';
       console.log('[SOP] would submit:', { ...window._sopData,
         files: window._sopFiles.map(f => f.name) });
-      // Reveal the Continue button so they can proceed past Step 8
-      const row = document.getElementById('cont-8-row');
-      if (row) row.style.display = 'flex';
+      // Unlock the floating Continue button so they can proceed past Step 8
+      window._step8Submitted = true;
+      updateFloatingCta();
       return;
     }
 
@@ -1256,9 +1397,9 @@
       if (data.success) {
         status.className = 'upload-status success';
         status.innerHTML = '✓ Folder created: <a href="' + data.folderUrl + '" target="_blank">' + data.folderName + '</a>';
-        // Reveal the Continue button so they can advance past Step 8
-        const row = document.getElementById('cont-8-row');
-        if (row) row.style.display = 'flex';
+        // Unlock the floating Continue button so they can advance past Step 8
+        window._step8Submitted = true;
+        updateFloatingCta();
         // Draft will be cleared once they hit Done (slide 11) — that's the real wrap-up.
       } else {
         throw new Error(data.error || 'Unknown error');
@@ -1326,6 +1467,7 @@
     updateLockedDots();
     progText.textContent = LABELS[i] || ('Step ' + i);
     navLeft.classList.toggle('disabled', i === 0);
+    updateFloatingCta();
   }
 
   deck.addEventListener('scroll', () => requestAnimationFrame(update));
@@ -1339,8 +1481,16 @@
 
   // Restore any saved draft from localStorage on page load
   restoreDraft();
-  // Initial gate evaluation (in case nothing was restored)
-  [2,3,5,7].forEach(refreshGate);
+
+  // Restore preview-mode preference. Also enable if ?preview=1 in URL.
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('preview') === '1' || localStorage.getItem('recess_sop_preview_mode') === '1') {
+    window._previewMode = true;
+  }
+  applyPreviewMode();
+
+  // Initial gate + button state
+  updateFloatingCta();
   update();
 </script>
 
