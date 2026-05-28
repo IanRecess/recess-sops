@@ -36,11 +36,11 @@
   .slide {
     flex: 0 0 100vw; height: 100vh;
     scroll-snap-align: start;
-    padding: 36px 240px 90px 60px;   /* big right padding leaves room for floating Continue */
+    padding: 36px 80px 90px;   /* symmetric — content is viewport-centered */
     display: flex; flex-direction: column;
     justify-content: center; align-items: center; text-align: center;
   }
-  .slide > * { max-width: 800px; }
+  .slide > * { max-width: 720px; }
 
   /* hero */
   .slide.hero {
@@ -644,12 +644,13 @@
   }
 
   /* On narrower viewports, move the CTA to bottom-center so it doesn't fight content */
-  @media (max-width: 900px) {
-    .slide { padding: 36px 32px 120px; }
+  @media (max-width: 1200px) {
+    .slide { padding: 36px 32px 140px; }
     .float-cta {
-      right: 50%; top: auto; bottom: 70px;
+      right: 50%; top: auto; bottom: 24px;
       transform: translateX(50%);
     }
+    .dots-row { margin-top: 8px; }
   }
 
 
