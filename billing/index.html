@@ -1361,42 +1361,67 @@
     });
   })();
 
-  // Submit handler — POSTs all data + files to Apps Script webhook
-  // (URL gets filled in once we deploy the script)
+  // ─── Submit handler ────────────────────────────────────────
+  // Reads files as base64 and POSTs everything as a JSON body to the
+  // Apps Script Web App. Sent as text/plain to dodge CORS preflight
+  // (Apps Script doesn't handle OPTIONS preflight gracefully — but it
+  // parses e.postData.contents regardless of declared Content-Type).
+  const WEBHOOK_URL = 'https://script.google.com/a/macros/recess.is/s/AKfycbx9cdWmr9qdwlwxoVpiu_C_BjIXmf-l2SwDIXGomcJIYR7p_F7QPCZZFYpK7g9VZFNE/exec';
+
+  function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        // FileReader gives "data:<mime>;base64,<payload>" — strip the prefix
+        const b64 = String(reader.result).split(',')[1] || '';
+        resolve(b64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function submitToDrive() {
     const status = document.getElementById('upload-status');
     const btn = document.getElementById('submit-btn');
-    const WEBHOOK_URL = ''; // ← Will be filled with deployed Apps Script Web App URL
-
-    if (!WEBHOOK_URL) {
-      status.className = 'upload-status';
-      status.innerHTML = '⚙️ Backend not wired yet — Apps Script webhook URL will go here. <br>For now, click <a href="https://drive.google.com/drive/u/0/folders/1TMr39s4aoGMiBmhjCJte7cl01TKmV6Wr" target="_blank">the Drive</a> and upload manually.';
-      console.log('[SOP] would submit:', { ...window._sopData,
-        files: window._sopFiles.map(f => f.name) });
-      // Unlock the floating Continue button so they can proceed past Step 8
-      window._step8Submitted = true;
-      updateFloatingCta();
-      return;
-    }
 
     btn.disabled = true;
     status.className = 'upload-status';
-    status.textContent = '⏳ Uploading and creating folder…';
+    status.textContent = '⏳ Reading files…';
 
     try {
-      const formData = new FormData();
-      formData.append('inputtedBy', window._sopData.inputtedBy || '');
-      formData.append('supplier', window._sopData.supplier || '');
-      formData.append('supplierType', window._sopData.supplierType || '');
-      formData.append('venueNotes', window._sopData.venueNotes || '');
-      formData.append('bulkImportLink', window._sopData.bulkImportLink || '');
-      formData.append('multiBillingLink', window._sopData.multiBillingLink || '');
-      window._sopFiles.forEach((f, i) => formData.append('file' + i, f));
-      const res = await fetch(WEBHOOK_URL, { method: 'POST', body: formData });
+      // Encode all files as base64 before building the payload
+      const fileData = await Promise.all(window._sopFiles.map(async (f) => ({
+        name: f.name,
+        type: f.type || 'application/octet-stream',
+        size: f.size,
+        b64: await fileToBase64(f),
+      })));
+
+      status.textContent = '⏳ Uploading + creating folder…';
+
+      const payload = {
+        inputtedBy:        window._sopData.inputtedBy        || '',
+        supplier:          window._sopData.supplier          || '',
+        supplierType:      window._sopData.supplierType      || '',
+        venueNotes:        window._sopData.venueNotes        || '',
+        billcom:           window._sopData.billcom           || '',
+        bulkImportLink:    window._sopData.bulkImportLink    || '',
+        multiBillingLink:  window._sopData.multiBillingLink  || '',
+        files: fileData,
+      };
+
+      const res = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload),
+      });
       const data = await res.json();
+
       if (data.success) {
         status.className = 'upload-status success';
-        status.innerHTML = '✓ Folder created: <a href="' + data.folderUrl + '" target="_blank">' + data.folderName + '</a>';
+        status.innerHTML = '✓ Folder created: <a href="' + data.folderUrl + '" target="_blank">' + data.folderName + '</a> · '
+                         + data.filesUploaded + ' file(s) uploaded';
         // Unlock the floating Continue button so they can advance past Step 8
         window._step8Submitted = true;
         updateFloatingCta();
