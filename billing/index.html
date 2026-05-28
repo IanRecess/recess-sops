@@ -511,6 +511,84 @@
   .upload-status.success { color: #047857; font-weight: 700; }
   .upload-status.error   { color: #B91C1C; font-weight: 700; }
 
+  /* ─── Continue button (gateway between steps) ─── */
+  .continue-row {
+    margin-top: 32px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+  .continue-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--teal);
+    color: white;
+    padding: 16px 36px;
+    border-radius: 999px;
+    border: none;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(19,186,213,0.30);
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .continue-btn:hover:not(:disabled) {
+    background: var(--teal-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(19,186,213,0.40);
+  }
+  .continue-btn::after { content: "→"; font-size: 20px; }
+  .continue-btn:disabled {
+    background: #CBD5E1;
+    color: #94A3B8;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
+  .continue-btn:disabled::after { color: #94A3B8; }
+  .continue-hint {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    font-style: italic;
+  }
+
+  /* ─── Locked progress dot (future steps not yet unlocked) ─── */
+  .dot.locked {
+    background: #F1F5F9;
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .dot.locked:hover { background: #F1F5F9; }
+
+  /* ─── Selectable yes/no branch cards (Bill.com step) ─── */
+  .branch-card.selectable {
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .branch-card.selectable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(15,28,46,0.10);
+  }
+  .branch-card.selectable.picked::after {
+    content: "✓";
+    position: absolute;
+    top: 12px; right: 14px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 14px;
+  }
+  .branch-card.yes.selectable { position: relative; }
+  .branch-card.no.selectable  { position: relative; }
+  .branch-card.yes.selectable.picked { border-width: 3px; }
+  .branch-card.yes.selectable.picked::after { background: var(--tip-border); }
+  .branch-card.no.selectable.picked  { border-width: 3px; }
+  .branch-card.no.selectable.picked::after  { background: var(--warn-border); }
+
 </style>
 </head>
 <body>
@@ -522,7 +600,7 @@
     <div class="label">Supply Ops · SOP</div>
     <h1>How to Submit Billing Info</h1>
     <p class="purpose">Align the organizer's info on the Recess platform and HubSpot so accounting can pay them.</p>
-    <a class="start-btn" onclick="goTo(1); return false;" href="#slide-1">Start</a>
+    <a class="start-btn" onclick="unlockAndGo(1); return false;" href="#slide-1">Start</a>
     <div class="resume-banner" id="resume-banner">
       <span class="resume-icon">💾</span>
       <span>Resuming your draft from <strong id="resume-time">—</strong></span>
@@ -544,6 +622,9 @@
       💡 <span class="label-bold">TIP:</span>
       Send it via email with a short note: "We can't pay you out until this is back. Takes 5 min."
     </div>
+    <div class="continue-row">
+      <button class="continue-btn" id="cont-1" onclick="unlockAndGo(2)">I've sent the form</button>
+    </div>
   </section>
 
   <!-- ─── STEP 2 — Capture: Inputter name ──────────────────── -->
@@ -555,10 +636,16 @@
       <label class="input-label" for="input-inputter">Your name</label>
       <input type="text" id="input-inputter" class="sop-input"
              placeholder="e.g. Ian Hong"
-             oninput="saveField('inputtedBy', this.value); markSaved('inputter-helper');"/>
+             oninput="saveField('inputtedBy', this.value); markSaved('inputter-helper'); refreshGate(2);"/>
       <div class="input-helper" id="inputter-helper">
         <span>Fills the "Inputted By" column (Col A) on the sheet</span>
         <span class="saved-tick">✓ saved</span>
+      </div>
+    </div>
+    <div class="continue-row">
+      <div style="text-align: center;">
+        <button class="continue-btn" id="cont-2" disabled onclick="unlockAndGo(3)">Continue</button>
+        <div class="continue-hint">Type your name to continue</div>
       </div>
     </div>
   </section>
@@ -572,7 +659,7 @@
       <label class="input-label" for="input-supplier">Company name (from the billing form)</label>
       <input type="text" id="input-supplier" class="sop-input"
              placeholder="e.g. Forum Asset Management"
-             oninput="saveField('supplier', this.value); markSaved('supplier-helper');"/>
+             oninput="saveField('supplier', this.value); markSaved('supplier-helper'); refreshGate(3);"/>
       <div class="input-helper" id="supplier-helper">
         <span>Fills the "Supplier" (Col B) AND "Company Name from Vendor Form" (Col C) — identically</span>
         <span class="saved-tick">✓ saved</span>
@@ -581,6 +668,12 @@
     <div class="callout warn" style="margin-top: 24px;">
       ⚠️ <span class="label-bold">Copy exactly:</span>
       no abbreviations, no LLC if their form doesn't say LLC, no extra words. This same name is going on the Recess platform too — they all have to match.
+    </div>
+    <div class="continue-row">
+      <div style="text-align: center;">
+        <button class="continue-btn" id="cont-3" disabled onclick="unlockAndGo(4)">Continue</button>
+        <div class="continue-hint">Type the company name to continue</div>
+      </div>
     </div>
   </section>
 
@@ -604,6 +697,9 @@
       💡 <span class="label-bold">If any of these are blank:</span>
       bounce the form back to the organizer before you go any further. Don't try to guess or look it up — they fill it out, you don't.
     </div>
+    <div class="continue-row">
+      <button class="continue-btn" id="cont-4" onclick="unlockAndGo(5)">Top half confirmed</button>
+    </div>
   </section>
 
   <!-- ─── STEP 5 — Method of Payment branch ────────────── -->
@@ -612,7 +708,7 @@
     <h2>Now check: do they have a Bill.com account?</h2>
     <p class="body">This determines which fields in the bottom half (<strong>Method of Payment</strong>) they need to fill.</p>
     <div class="branch">
-      <div class="branch-card yes">
+      <div class="branch-card yes selectable" id="billcom-yes" onclick="selectBillcom('yes')">
         <div class="branch-condition">✓ Yes — they have Bill.com</div>
         <div class="branch-then">
           Confirm these two fields are filled:
@@ -622,7 +718,7 @@
           </ul>
         </div>
       </div>
-      <div class="branch-card no">
+      <div class="branch-card no selectable" id="billcom-no" onclick="selectBillcom('no')">
         <div class="branch-condition">✗ No — no Bill.com</div>
         <div class="branch-then">
           They fill in the full <strong>Bank Information for ACH Payment</strong> section:
@@ -634,6 +730,12 @@
             <li>Swift Code</li>
           </ul>
         </div>
+      </div>
+    </div>
+    <div class="continue-row">
+      <div style="text-align: center;">
+        <button class="continue-btn" id="cont-5" disabled onclick="unlockAndGo(6)">Continue</button>
+        <div class="continue-hint">Click Yes or No to continue</div>
       </div>
     </div>
   </section>
@@ -674,6 +776,9 @@
       ⚠️ <span class="label-bold">DO NOT IMPROVISE:</span>
       no abbreviations, no LLC if their form doesn't say LLC, no extra words. Copy exactly what they wrote on the form. If any of the three don't match, accounting can't reconcile → payment fails.
     </div>
+    <div class="continue-row">
+      <button class="continue-btn" id="cont-6" onclick="unlockAndGo(7)">All three names match</button>
+    </div>
   </section>
 
   <!-- ─── STEP 7 — Supplier vs Supplier - Venue ─────── -->
@@ -706,11 +811,17 @@
         <label class="input-label" for="input-venue-notes">Venue-split notes (plain text — describe how the venues get split)</label>
         <textarea id="input-venue-notes" class="sop-textarea"
                   placeholder="e.g. 'Each property has its own LLC and bank account. See attached spreadsheet for routing per location.'"
-                  oninput="saveField('venueNotes', this.value); markSaved('venue-helper');"></textarea>
+                  oninput="saveField('venueNotes', this.value); markSaved('venue-helper'); refreshGate(7);"></textarea>
         <div class="input-helper" id="venue-helper">
           <span>Goes into the Account Split Reference notes column</span>
           <span class="saved-tick">✓ saved</span>
         </div>
+      </div>
+    </div>
+    <div class="continue-row">
+      <div style="text-align: center;">
+        <button class="continue-btn" id="cont-7" disabled onclick="unlockAndGo(8)">Continue</button>
+        <div class="continue-hint" id="cont-7-hint">Pick Supplier or Supplier - Venue to continue</div>
       </div>
     </div>
   </section>
@@ -744,6 +855,9 @@
         <li>The folder link auto-fills <strong>Column G</strong> ("Link to folder") on the sheet</li>
       </ul>
     </div>
+    <div class="continue-row" id="cont-8-row" style="display:none;">
+      <button class="continue-btn" id="cont-8" onclick="unlockAndGo(9)">Continue</button>
+    </div>
   </section>
 
   <!-- ─── STEP 9 — Bulk Import Form link (OPTIONAL) ───────────────── -->
@@ -765,6 +879,9 @@
     <div class="callout tip" style="margin-top: 20px; max-width: 720px;">
       ✅ <span class="label-bold">Heads up — Column G is automatic.</span>
       You don't need to paste a folder link anywhere. <strong>Column G</strong> ("Link to folder") auto-fills with the Drive folder created in Step 8. No action needed.
+    </div>
+    <div class="continue-row">
+      <button class="continue-btn" id="cont-9" onclick="unlockAndGo(10)">Continue</button>
     </div>
   </section>
 
@@ -804,6 +921,9 @@
         <span class="saved-tick">✓ saved</span>
       </div>
     </div>
+    <div class="continue-row">
+      <button class="continue-btn" id="cont-10" onclick="finishAndGoToDone()">Finish</button>
+    </div>
   </section>
 
   <!-- ─── FINAL — Live view of the destination sheet ─────────────── -->
@@ -831,37 +951,36 @@
 
 </div>
 
-<button class="nav-arrow left disabled" id="navLeft" onclick="navStep(-1)">‹</button>
-<button class="nav-arrow right" id="navRight" onclick="navStep(1)">›</button>
+<button class="nav-arrow left disabled" id="navLeft" onclick="goBack()" title="Go back">‹</button>
 
 <div class="progress" id="progressBar">
   <span class="progress-text" id="progressText">Start</span>
   <span class="autosave-tag" id="autosave-tag">✓ auto-saved</span>
-  <span class="dot active" data-i="0" onclick="goTo(0)"></span>
-  <span class="dot" data-i="1" onclick="goTo(1)"></span>
-  <span class="dot" data-i="2" onclick="goTo(2)"></span>
-  <span class="dot" data-i="3" onclick="goTo(3)"></span>
-  <span class="dot" data-i="4" onclick="goTo(4)"></span>
-  <span class="dot" data-i="5" onclick="goTo(5)"></span>
-  <span class="dot" data-i="6" onclick="goTo(6)"></span>
-  <span class="dot" data-i="7" onclick="goTo(7)"></span>
-  <span class="dot" data-i="8" onclick="goTo(8)"></span>
-  <span class="dot" data-i="9" onclick="goTo(9)"></span>
-  <span class="dot" data-i="10" onclick="goTo(10)"></span>
-  <span class="dot final-dot" data-i="11" onclick="goTo(11)" title="Done — view the live sheet"></span>
+  <span class="dot active" data-i="0" onclick="dotClick(0)"></span>
+  <span class="dot" data-i="1" onclick="dotClick(1)"></span>
+  <span class="dot" data-i="2" onclick="dotClick(2)"></span>
+  <span class="dot" data-i="3" onclick="dotClick(3)"></span>
+  <span class="dot" data-i="4" onclick="dotClick(4)"></span>
+  <span class="dot" data-i="5" onclick="dotClick(5)"></span>
+  <span class="dot" data-i="6" onclick="dotClick(6)"></span>
+  <span class="dot" data-i="7" onclick="dotClick(7)"></span>
+  <span class="dot" data-i="8" onclick="dotClick(8)"></span>
+  <span class="dot" data-i="9" onclick="dotClick(9)"></span>
+  <span class="dot" data-i="10" onclick="dotClick(10)"></span>
+  <span class="dot final-dot" data-i="11" onclick="dotClick(11)" title="Done — view the live sheet"></span>
 </div>
 
 <script>
   const deck = document.getElementById('deck');
   const navLeft = document.getElementById('navLeft');
-  const navRight = document.getElementById('navRight');
   const progText = document.getElementById('progressText');
   const LABELS = ['Start', 'Step 1', 'Step 2', 'Step 3', 'Step 4', 'Step 5', 'Step 6', 'Step 7', 'Step 8', 'Step 9', 'Step 10', 'Done'];
 
-  // ─── Form data capture ──────────────────────────
+  // ─── Form data capture + progress gate ──────────
   // Stored client-side + localStorage so reload doesn't nuke progress.
   // Will be POSTed to Apps Script webhook at the end.
   window._sopData = {};
+  window._maxReached = 0;     // furthest slide unlocked via Continue
   const STORAGE_KEY = 'recess_billing_sop_draft';
 
   function saveField(key, value) {
@@ -873,6 +992,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         data: window._sopData,
+        maxReached: window._maxReached,
         savedAt: new Date().toISOString(),
       }));
       flashAutosave();
@@ -900,6 +1020,9 @@
     const draft = loadDraft();
     if (!draft || !draft.data || Object.keys(draft.data).length === 0) return;
     window._sopData = draft.data;
+    if (typeof draft.maxReached === 'number') {
+      window._maxReached = draft.maxReached;
+    }
 
     // Restore each text input
     const fieldToInputId = {
@@ -924,6 +1047,23 @@
       if (reveal) reveal.classList.toggle('shown', window._sopData.supplierType === 'Supplier - Venue');
     }
 
+    // Restore Bill.com choice
+    if (window._sopData.billcom) {
+      const y = document.getElementById('billcom-yes');
+      const n = document.getElementById('billcom-no');
+      if (y) y.classList.toggle('picked', window._sopData.billcom === 'yes');
+      if (n) n.classList.toggle('picked', window._sopData.billcom === 'no');
+    }
+
+    // Re-evaluate all Continue button gates based on restored data
+    [2,3,5,7].forEach(refreshGate);
+
+    // If they previously made it past Step 8, also reveal its Continue button
+    if (window._maxReached >= 9) {
+      const r = document.getElementById('cont-8-row');
+      if (r) r.style.display = 'flex';
+    }
+
     // Show the resume banner on the cover slide
     const banner = document.getElementById('resume-banner');
     const timeEl = document.getElementById('resume-time');
@@ -940,6 +1080,7 @@
     localStorage.removeItem(STORAGE_KEY);
     window._sopData = {};
     window._sopFiles = [];
+    window._maxReached = 0;
     // Blank text inputs + textareas
     document.querySelectorAll('.sop-input, .sop-textarea').forEach(el => el.value = '');
     // Unselect supplier-type cards + hide reveal
@@ -949,6 +1090,11 @@
     });
     const reveal = document.getElementById('reveal-venue');
     if (reveal) reveal.classList.remove('shown');
+    // Unselect Bill.com choice
+    ['billcom-yes', 'billcom-no'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('picked');
+    });
     // Hide the resume banner
     const banner = document.getElementById('resume-banner');
     if (banner) banner.classList.remove('shown');
@@ -959,6 +1105,15 @@
     if (zone) zone.classList.remove('has-file');
     const submitBtn = document.getElementById('submit-btn');
     if (submitBtn) submitBtn.disabled = true;
+    // Re-disable all gated Continues
+    [2,3,5,7].forEach(refreshGate);
+    // Hide Step 8 Continue
+    const c8 = document.getElementById('cont-8-row');
+    if (c8) c8.style.display = 'none';
+    // Re-lock dots
+    updateLockedDots();
+    // Send them back to the start
+    goTo(0);
   }
 
   function confirmClearDraft() {
@@ -983,6 +1138,45 @@
     document.getElementById('choice-supplier-venue').classList.toggle('selected', type === 'Supplier - Venue');
     const reveal = document.getElementById('reveal-venue');
     if (reveal) reveal.classList.toggle('shown', type === 'Supplier - Venue');
+    refreshGate(7);
+  }
+
+  // Bill.com choice on Step 5
+  function selectBillcom(choice) {
+    saveField('billcom', choice);
+    const y = document.getElementById('billcom-yes');
+    const n = document.getElementById('billcom-no');
+    if (y) y.classList.toggle('picked', choice === 'yes');
+    if (n) n.classList.toggle('picked', choice === 'no');
+    refreshGate(5);
+  }
+
+  // ─── Continue-button gating logic ──────────────────────────
+  // Re-evaluates whether the Continue button on a specific slide should be enabled.
+  function refreshGate(slideIdx) {
+    const btn = document.getElementById('cont-' + slideIdx);
+    if (!btn) return;
+    let ok = false;
+    if (slideIdx === 2) {
+      ok = !!(window._sopData.inputtedBy || '').trim();
+    } else if (slideIdx === 3) {
+      ok = !!(window._sopData.supplier || '').trim();
+    } else if (slideIdx === 5) {
+      ok = window._sopData.billcom === 'yes' || window._sopData.billcom === 'no';
+    } else if (slideIdx === 7) {
+      const type = window._sopData.supplierType;
+      if (type === 'Supplier') ok = true;
+      else if (type === 'Supplier - Venue') {
+        ok = !!(window._sopData.venueNotes || '').trim();
+        const hint = document.getElementById('cont-7-hint');
+        if (hint) hint.textContent = ok ? '' : 'Add venue-split notes to continue';
+      } else {
+        ok = false;
+      }
+    } else {
+      ok = true; // non-gated steps
+    }
+    btn.disabled = !ok;
   }
 
   // ─── File upload handling (single zone, multiple files) ───
@@ -1038,6 +1232,9 @@
       status.innerHTML = '⚙️ Backend not wired yet — Apps Script webhook URL will go here. <br>For now, click <a href="https://drive.google.com/drive/u/0/folders/1TMr39s4aoGMiBmhjCJte7cl01TKmV6Wr" target="_blank">the Drive</a> and upload manually.';
       console.log('[SOP] would submit:', { ...window._sopData,
         files: window._sopFiles.map(f => f.name) });
+      // Reveal the Continue button so they can proceed past Step 8
+      const row = document.getElementById('cont-8-row');
+      if (row) row.style.display = 'flex';
       return;
     }
 
@@ -1059,8 +1256,10 @@
       if (data.success) {
         status.className = 'upload-status success';
         status.innerHTML = '✓ Folder created: <a href="' + data.folderUrl + '" target="_blank">' + data.folderName + '</a>';
-        // Wipe the draft so the next submitter starts fresh
-        localStorage.removeItem(STORAGE_KEY);
+        // Reveal the Continue button so they can advance past Step 8
+        const row = document.getElementById('cont-8-row');
+        if (row) row.style.display = 'flex';
+        // Draft will be cleared once they hit Done (slide 11) — that's the real wrap-up.
       } else {
         throw new Error(data.error || 'Unknown error');
       }
@@ -1073,27 +1272,75 @@
   const TOTAL = LABELS.length;
 
   function current() { return Math.round(deck.scrollLeft / window.innerWidth); }
-  function goTo(i) { deck.scrollTo({ left: i * window.innerWidth, behavior: 'smooth' }); }
-  function navStep(d) {
-    const next = Math.max(0, Math.min(TOTAL - 1, current() + d));
-    goTo(next);
+
+  // ─── Gated navigation ─────────────────────────────────────
+  // Forward movement only via unlockAndGo() (triggered by Continue buttons).
+  // Backward movement is free.
+
+  function goTo(i) {
+    // Block jumping past the unlocked frontier
+    if (i > window._maxReached) return;
+    if (i < 0 || i >= TOTAL) return;
+    deck.scrollTo({ left: i * window.innerWidth, behavior: 'smooth' });
   }
+
+  function unlockAndGo(target) {
+    if (target > window._maxReached) {
+      window._maxReached = target;
+      persistDraft();
+      updateLockedDots();
+    }
+    // Use raw scroll so we always advance even if maxReached check is in the way
+    deck.scrollTo({ left: target * window.innerWidth, behavior: 'smooth' });
+  }
+
+  // Special: clicking "Finish" on Step 10 advances to Done AND wipes the draft
+  // so the next session starts fresh for the next vendor.
+  function finishAndGoToDone() {
+    unlockAndGo(11);
+    // Delay the wipe slightly so localStorage write has settled
+    setTimeout(() => {
+      localStorage.removeItem(STORAGE_KEY);
+    }, 400);
+  }
+
+  function goBack() {
+    const next = Math.max(0, current() - 1);
+    deck.scrollTo({ left: next * window.innerWidth, behavior: 'smooth' });
+  }
+
+  function dotClick(i) {
+    if (i > window._maxReached) return; // locked future
+    goTo(i);
+  }
+
+  function updateLockedDots() {
+    document.querySelectorAll('.dot').forEach((d, idx) => {
+      d.classList.toggle('locked', idx > window._maxReached);
+    });
+  }
+
   function update() {
     const i = current();
     document.querySelectorAll('.dot').forEach((d, idx) => d.classList.toggle('active', idx === i));
+    updateLockedDots();
     progText.textContent = LABELS[i] || ('Step ' + i);
     navLeft.classList.toggle('disabled', i === 0);
-    navRight.classList.toggle('disabled', i === TOTAL - 1);
   }
+
   deck.addEventListener('scroll', () => requestAnimationFrame(update));
   window.addEventListener('resize', update);
+
+  // Keyboard: ArrowLeft = back (free). ArrowRight = intentionally disabled
+  // — forward progress requires clicking the Continue button on each step.
   document.addEventListener('keydown', e => {
-    if (e.key === 'ArrowRight') navStep(1);
-    if (e.key === 'ArrowLeft')  navStep(-1);
+    if (e.key === 'ArrowLeft') goBack();
   });
 
   // Restore any saved draft from localStorage on page load
   restoreDraft();
+  // Initial gate evaluation (in case nothing was restored)
+  [2,3,5,7].forEach(refreshGate);
   update();
 </script>
 
