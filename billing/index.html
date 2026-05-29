@@ -36,6 +36,7 @@
   .slide {
     flex: 0 0 100vw; height: 100vh;
     scroll-snap-align: start;
+    scroll-snap-stop: always;  /* prevents scroll gestures from skipping past slides */
     padding: 36px 80px 90px;   /* symmetric — content is viewport-centered */
     display: flex; flex-direction: column;
     justify-content: center; align-items: center; text-align: center;
@@ -1291,7 +1292,15 @@
     }
     cta.classList.add('shown');
     btn.textContent = config.label;
-    btn.onclick = config.action;
+    // Debounce: ignore subsequent clicks within 700ms (one smooth-scroll cycle).
+    // This prevents rapid double-clicks from chain-advancing through slides
+    // while the smooth-scroll animation is still in flight.
+    btn.onclick = () => {
+      const now = Date.now();
+      if (now - (window._lastCtaClick || 0) < 700) return;
+      window._lastCtaClick = now;
+      config.action();
+    };
     btn.disabled = false;
     if (hint) hint.textContent = config.hint || '';
   }
