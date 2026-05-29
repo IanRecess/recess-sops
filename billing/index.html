@@ -1033,9 +1033,8 @@
     </p>
 
     <div class="sheet-embed-wrap">
-      <iframe class="sheet-embed"
-              src="https://docs.google.com/spreadsheets/d/1VK3noKtVc3QnRgoB6Xf_n9cnAk8qlSVjX2hsmEBTnms/edit?gid=943420630&amp;widget=true&amp;headers=true&amp;rm=minimal"
-              loading="lazy"
+      <iframe class="sheet-embed" id="final-sheet-iframe"
+              data-src="https://docs.google.com/spreadsheets/d/1VK3noKtVc3QnRgoB6Xf_n9cnAk8qlSVjX2hsmEBTnms/edit?gid=943420630&amp;widget=true&amp;headers=true&amp;rm=minimal"
               title="Vendor Onboarding Forms & W9s — live view"></iframe>
       <div class="sheet-caption">
         Live · Tab: "1) Vendor Onboarding Forms &amp; W9s" · You need Drive access to see the contents
@@ -1524,6 +1523,15 @@
     navLeft.classList.toggle('disabled', i === 0);
     updateFloatingCta();
     if (i === 10) populateSummary();
+    // Only load the Google Sheets iframe when user actually lands on slide 11.
+    // The iframe's auto-focus on load was scrolling the parent deck horizontally
+    // (slide 11 contains the iframe → focus → scrollIntoView → deck scrolls to slide 11).
+    if (i === 11) {
+      const iframe = document.getElementById('final-sheet-iframe');
+      if (iframe && !iframe.src && iframe.dataset.src) {
+        iframe.src = iframe.dataset.src;
+      }
+    }
   }
 
   deck.addEventListener('scroll', () => requestAnimationFrame(update));
