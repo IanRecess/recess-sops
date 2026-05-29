@@ -36,7 +36,6 @@
   .slide {
     flex: 0 0 100vw; height: 100vh;
     scroll-snap-align: start;
-    scroll-snap-stop: always;  /* prevents scroll gestures from skipping past slides */
     padding: 36px 80px 90px;   /* symmetric — content is viewport-centered */
     display: flex; flex-direction: column;
     justify-content: center; align-items: center; text-align: center;
@@ -1373,6 +1372,7 @@
   }
 
   async function submitToDrive() {
+    console.log('[SOP submitToDrive] called, current slide =', current());
     // Guard: only allow submit when user is actually on the Push slide (10).
     // Prevents stray Enter / Tab+Enter from a different slide accidentally
     // triggering the Push button via DOM tab order.
@@ -1479,6 +1479,8 @@
 
   function goTo(i) {
     if (i < 0 || i >= TOTAL) return;
+    // Diagnostic: log every navigation with a stack trace
+    console.log('[SOP goTo]', 'target=' + i, 'from=' + current(), '\n', new Error().stack);
     deck.scrollTo({ left: i * window.innerWidth, behavior: 'smooth' });
   }
 
