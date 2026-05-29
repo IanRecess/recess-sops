@@ -757,20 +757,20 @@
   <section class="slide" id="slide-3">
     <span class="step-num">Step 3</span>
     <h2>Who is the supplier?</h2>
-    <p class="body">Type the <strong>Organization Name</strong> exactly as it appears on the billing form. This goes into the sheet twice — and onto the Recess platform — all identically.</p>
+    <p class="body">Type the <strong>Organization Name</strong> (the legal entity) exactly as it appears on the billing form. This is the entity that gets paid in Bill.com.</p>
     <div class="input-block">
       <label class="input-label" for="input-supplier">Organization Name (from the billing form)</label>
       <input type="text" id="input-supplier" class="sop-input"
-             placeholder="e.g. Forum Asset Management"
+             placeholder="e.g. Sara Mesa Fitness LLC"
              oninput="saveField('supplier', this.value); markSaved('supplier-helper'); refreshGate(3);"/>
       <div class="input-helper" id="supplier-helper">
-        <span>Fills "Organization Name" (Col B) AND "Organization Name from Vendor Form" (Col C) — identically</span>
+        <span>Fills Col B (Legal Entity), Col E (Org Name from Form), and Col H (Vendor in Bill.com/QBO) — all the same value</span>
         <span class="saved-tick">✓ saved</span>
       </div>
     </div>
     <div class="callout warn" style="margin-top: 24px;">
       ⚠️ <span class="label-bold">Copy exactly:</span>
-      no abbreviations, no LLC if their form doesn't say LLC, no extra words. This same name is going on the Recess platform too — they all have to match.
+      no abbreviations, no LLC if their form doesn't say LLC, no extra words. This is the legal name the check gets cut to.
     </div>
     <div class="continue-row">
       <div style="text-align: center;">
@@ -843,97 +843,123 @@
     </div>
   </section>
 
-  <!-- ─── STEP 6 — Three names, one entity ─── -->
+  <!-- ─── STEP 6 — Three distinct names (NEW model) ─── -->
   <section class="slide" id="slide-6">
     <span class="step-num">Step 6 — Critical</span>
-    <h2>Same name in three places — exactly</h2>
-    <p class="body">The <strong>Organization Name</strong> appears in three places. They must be identical across every system — this is the entity that gets paid.</p>
+    <h2>Three names. One entity that gets paid.</h2>
+    <p class="body">The form, the platform Supplier, and the platform Venue Display can show different names — they're tracked separately on purpose. The <strong>legal entity</strong> (from the form) is what gets paid in Bill.com.</p>
     <div class="match-row">
       <div class="match-side">
-        <div class="where">On the Billing Form</div>
+        <div class="where">On the Form</div>
         <div class="field">Organization Name</div>
-        <div class="sample">"Forum Asset Management"</div>
+        <div class="sample">"Sara Mesa Fitness LLC"</div>
       </div>
-      <div class="match-equals">=</div>
+      <div class="match-equals">→</div>
       <div class="match-side">
-        <div class="where">On the Sheet</div>
-        <div class="field">Organization Name</div>
-        <div class="sample">"Forum Asset Management"</div>
+        <div class="where">Platform · Supplier (umbrella)</div>
+        <div class="field">Organization Name Platform</div>
+        <div class="sample">"Crunch Fitness"</div>
       </div>
-      <div class="match-equals">=</div>
+      <div class="match-equals">→</div>
       <div class="match-side">
-        <div class="where">On the Recess Platform · Supplier</div>
-        <div class="field">Organization Name</div>
-        <div class="sample">"Forum Asset Management"</div>
+        <div class="where">Platform · Venue Display</div>
+        <div class="field">Title Pattern</div>
+        <div class="sample">"Crunch - Sara Mesa"</div>
       </div>
     </div>
     <div style="margin-top: 26px; text-align: center;">
       <div style="display:inline-block; background: var(--ink); color: white;
-                   padding: 14px 28px; border-radius: 999px;
+                   padding: 14px 28px; border-radius: 4px;
                    font-size: 15px; font-weight: 800;
                    letter-spacing: 0.08em; text-transform: uppercase;">
-        ⬆ The entity that gets paid
+        ⬇ The legal entity is what gets paid (Col B → Bill.com)
       </div>
     </div>
-    <div class="callout warn" style="margin-top: 26px;">
-      ⚠️ <span class="label-bold">DO NOT IMPROVISE:</span>
-      no abbreviations, no LLC if their form doesn't say LLC, no extra words. Copy exactly what they wrote on the form. If any of the three don't match, accounting can't reconcile → payment fails.
+    <div class="callout note" style="margin-top: 26px;">
+      ℹ️ <span class="label-bold">Why three?</span>
+      The legal entity ("Sara Mesa Fitness LLC") gets the check. But on the platform, this venue is grouped under an umbrella supplier ("Crunch Fitness") with a display name following the title-venue pattern ("Crunch - Sara Mesa"). Step 7 figures out which case you're in.
     </div>
     <div class="continue-row">
-      <button class="continue-btn" id="cont-6" onclick="unlockAndGo(7)">All three names match</button>
+      <button class="continue-btn" id="cont-6" onclick="unlockAndGo(7)">Got it — check Account Split Reference</button>
     </div>
   </section>
 
-  <!-- ─── STEP 7 — Supplier vs Supplier - Venue ─────── -->
+  <!-- ─── STEP 7 — Check Split Reference → Supplier vs Supplier - Venue ─── -->
   <section class="slide" id="slide-7">
     <span class="step-num">Step 7</span>
-    <h2>Is this a Supplier or a Supplier - Venue?</h2>
-    <p class="body">A <strong>Supplier</strong> is one entity that gets paid for everything. A <strong>Supplier - Venue</strong> has multiple venues that each get paid separately.</p>
+    <h2>Check the Account Split Reference sheet first</h2>
+    <p class="body">Open the sheet below and search for this entity (or its parent organization). If they're already on it, they belong to an existing umbrella supplier — they're a <strong>Supplier - Venue</strong>. If not, they're a new <strong>Supplier</strong>.</p>
+    <a class="btn-link" href="https://docs.google.com/spreadsheets/d/1VK3noKtVc3QnRgoB6Xf_n9cnAk8qlSVjX2hsmEBTnms/edit?gid=808191098#gid=808191098" target="_blank" style="margin-bottom: 16px;">
+      Open Account Split Reference sheet
+    </a>
     <div class="choice-row">
       <div class="choice-card" id="choice-supplier" onclick="selectSupplierType('Supplier')">
         <div class="choice-title">Supplier</div>
-        <div class="choice-desc">One entity. One payout. Continue to the next step — no extra work here.</div>
+        <div class="choice-desc">NOT on the Split Reference sheet. New umbrella. Legal entity is the supplier itself — no extra fields needed.</div>
       </div>
       <div class="choice-card" id="choice-supplier-venue" onclick="selectSupplierType('Supplier - Venue')">
         <div class="choice-title">Supplier - Venue</div>
-        <div class="choice-desc">Multiple venues, each paid separately. Needs extra info before continuing.</div>
+        <div class="choice-desc">ALREADY on the Split Reference sheet. Falls under an existing umbrella. Needs umbrella name + title-venue pattern.</div>
       </div>
     </div>
 
     <div class="reveal" id="reveal-venue">
       <div class="callout warn">
-        ⚠️ <span class="label-bold">Because this is Supplier - Venue, all of this happens automatically:</span>
+        ⚠️ <span class="label-bold">Because this is Supplier - Venue, fill in these 4 fields:</span>
         <ul style="margin: 8px 0 0 20px;">
-          <li><strong>Column E</strong> on the main sheet → marked <strong>Yes</strong></li>
-          <li><strong>Account Split Reference (Auto)</strong> tab → new row added with vendor name, date, your name, and the notes below</li>
-          <li><strong>Column H</strong> on the main sheet → auto-filled with the Multiple Billing Sheet link below</li>
+          <li>Umbrella name (existing Supplier on the platform) → <strong>Col C</strong></li>
+          <li>Title-Venue pattern (display name on platform) → <strong>Col D</strong></li>
+          <li>Venue-split notes → new row in Account Split Reference</li>
+          <li>Multiple Billing Sheet URL → <strong>Col K</strong></li>
         </ul>
       </div>
 
       <div class="input-block" style="margin-top: 18px;">
-        <label class="input-label" for="input-venue-notes">1 · Venue-split notes (plain text — how do the venues get split?)</label>
+        <label class="input-label" for="input-org-platform">1 · Umbrella name (Organization Name Platform)</label>
+        <input type="text" id="input-org-platform" class="sop-input"
+               placeholder="e.g. Crunch Fitness"
+               oninput="saveField('organizationNamePlatform', this.value); markSaved('org-platform-helper');"/>
+        <div class="input-helper" id="org-platform-helper">
+          <span>The existing umbrella Supplier on the platform · Fills <strong>Col C</strong></span>
+          <span class="saved-tick">✓ saved</span>
+        </div>
+      </div>
+
+      <div class="input-block" style="margin-top: 18px;">
+        <label class="input-label" for="input-title-pattern">2 · Title-Venue Pattern (Venue Display)</label>
+        <input type="text" id="input-title-pattern" class="sop-input"
+               placeholder="e.g. Crunch - Sara Mesa"
+               oninput="saveField('titlePattern', this.value); markSaved('title-pattern-helper');"/>
+        <div class="input-helper" id="title-pattern-helper">
+          <span>Exactly as it displays on the platform (Title - Venue) · Fills <strong>Col D</strong></span>
+          <span class="saved-tick">✓ saved</span>
+        </div>
+      </div>
+
+      <div class="input-block" style="margin-top: 18px;">
+        <label class="input-label" for="input-venue-notes">3 · Venue-split notes (plain text — how do the venues get split?)</label>
         <textarea id="input-venue-notes" class="sop-textarea"
                   placeholder="e.g. 'Each property has its own LLC and bank account. See attached spreadsheet for routing per location.'"
-                  oninput="saveField('venueNotes', this.value); markSaved('venue-helper'); refreshGate(7);"></textarea>
+                  oninput="saveField('venueNotes', this.value); markSaved('venue-helper');"></textarea>
         <div class="input-helper" id="venue-helper">
-          <span>Goes into the Account Split Reference (Auto) notes column</span>
+          <span>Goes into the Account Split Reference notes column</span>
           <span class="saved-tick">✓ saved</span>
         </div>
       </div>
 
       <div style="margin-top: 22px; text-align: left;">
-        <div class="input-label" style="margin-bottom: 8px;">2 · Have them fill out the Multiple Billing Sheet template</div>
+        <div class="input-label" style="margin-bottom: 8px;">4 · Have them fill out the Multiple Billing Sheet template</div>
         <a class="btn-link" href="https://docs.google.com/spreadsheets/d/1_NIU98SwrxFp1AxJDBAk4Q1hfO8N9hnLpAQ1z1PZtzM/edit?gid=0#gid=0" target="_blank">
           Open Multiple Billing Sheet template
         </a>
       </div>
 
       <div class="input-block" style="margin-top: 18px;">
-        <label class="input-label" for="input-multi-billing">3 · Paste the completed Multiple Billing Sheet URL</label>
+        <label class="input-label" for="input-multi-billing">5 · Paste the completed Multiple Billing Sheet URL</label>
         <input type="url" id="input-multi-billing" class="sop-input" placeholder="https://docs.google.com/spreadsheets/..."
                oninput="saveField('multiBillingLink', this.value); markSaved('multi-billing-helper');"/>
         <div class="input-helper" id="multi-billing-helper">
-          <span>Auto-fills <strong>Column H</strong> on the main sheet</span>
+          <span>Auto-fills <strong>Col K</strong> on the main sheet (hyperlinked)</span>
           <span class="saved-tick">✓ saved</span>
         </div>
       </div>
@@ -1012,6 +1038,14 @@
       <div class="summary-row">
         <div class="summary-label">Files</div>
         <div class="summary-value" id="sum-files">—</div>
+      </div>
+      <div class="summary-row" id="sum-row-umbrella" style="display: none;">
+        <div class="summary-label">Umbrella (Col C)</div>
+        <div class="summary-value" id="sum-umbrella">—</div>
+      </div>
+      <div class="summary-row" id="sum-row-titlepattern" style="display: none;">
+        <div class="summary-label">Title pattern (Col D)</div>
+        <div class="summary-value" id="sum-titlepattern">—</div>
       </div>
       <div class="summary-row" id="sum-row-venue" style="display: none;">
         <div class="summary-label">Venue notes</div>
@@ -1143,6 +1177,8 @@
     const fieldToInputId = {
       inputtedBy: 'input-inputter',
       supplier: 'input-supplier',
+      organizationNamePlatform: 'input-org-platform',
+      titlePattern: 'input-title-pattern',
       venueNotes: 'input-venue-notes',
       bulkImportLink: 'input-bulk-link',
       multiBillingLink: 'input-multi-billing',
@@ -1287,7 +1323,7 @@
     3:  { label: "Continue",           action: () => goTo(4),  hint: "" },
     4:  { label: "Top half confirmed", action: () => goTo(5),  hint: "" },
     5:  { label: "Continue",           action: () => goTo(6),  hint: "" },
-    6:  { label: "Names match",        action: () => goTo(7),  hint: "" },
+    6:  { label: "Got it",            action: () => goTo(7),  hint: "" },
     7:  { label: "Continue",           action: () => goTo(8),  hint: "" },
     8:  { label: "Continue",           action: () => goTo(9),  hint: "" },
     9:  { label: "Review & Push",      action: () => goTo(10), hint: "Optional · skip if no bulk import link" },
@@ -1413,13 +1449,15 @@
       status.textContent = '⏳ Pushing to workbook…';
 
       const payload = {
-        inputtedBy:        window._sopData.inputtedBy        || '',
-        supplier:          window._sopData.supplier          || '',
-        supplierType:      window._sopData.supplierType      || '',
-        venueNotes:        window._sopData.venueNotes        || '',
-        billcom:           window._sopData.billcom           || '',
-        bulkImportLink:    window._sopData.bulkImportLink    || '',
-        multiBillingLink:  window._sopData.multiBillingLink  || '',
+        inputtedBy:               window._sopData.inputtedBy               || '',
+        supplier:                 window._sopData.supplier                 || '',
+        organizationNamePlatform: window._sopData.organizationNamePlatform || '',
+        titlePattern:             window._sopData.titlePattern             || '',
+        supplierType:             window._sopData.supplierType             || '',
+        venueNotes:               window._sopData.venueNotes               || '',
+        billcom:                  window._sopData.billcom                  || '',
+        bulkImportLink:           window._sopData.bulkImportLink           || '',
+        multiBillingLink:         window._sopData.multiBillingLink         || '',
         files: fileData,
       };
 
@@ -1471,15 +1509,21 @@
     set('sum-files',    files.length ? files.length + ' file(s)' : '');
 
     const isVenue = d.supplierType === 'Supplier - Venue';
-    const venueRow = document.getElementById('sum-row-venue');
-    const multiRow = document.getElementById('sum-row-multi');
-    const bulkRow  = document.getElementById('sum-row-bulk');
-    if (venueRow) venueRow.style.display = isVenue ? 'flex' : 'none';
-    if (multiRow) multiRow.style.display = isVenue ? 'flex' : 'none';
-    if (bulkRow)  bulkRow.style.display  = d.bulkImportLink ? 'flex' : 'none';
+    const umbrellaRow = document.getElementById('sum-row-umbrella');
+    const titleRow    = document.getElementById('sum-row-titlepattern');
+    const venueRow    = document.getElementById('sum-row-venue');
+    const multiRow    = document.getElementById('sum-row-multi');
+    const bulkRow     = document.getElementById('sum-row-bulk');
+    if (umbrellaRow) umbrellaRow.style.display = isVenue ? 'flex' : 'none';
+    if (titleRow)    titleRow.style.display    = isVenue ? 'flex' : 'none';
+    if (venueRow)    venueRow.style.display    = isVenue ? 'flex' : 'none';
+    if (multiRow)    multiRow.style.display    = isVenue ? 'flex' : 'none';
+    if (bulkRow)     bulkRow.style.display     = d.bulkImportLink ? 'flex' : 'none';
     if (isVenue) {
-      set('sum-venue', d.venueNotes);
-      set('sum-multi', d.multiBillingLink);
+      set('sum-umbrella',     d.organizationNamePlatform);
+      set('sum-titlepattern', d.titlePattern);
+      set('sum-venue',        d.venueNotes);
+      set('sum-multi',        d.multiBillingLink);
     }
     if (d.bulkImportLink) set('sum-bulk', d.bulkImportLink);
   }
