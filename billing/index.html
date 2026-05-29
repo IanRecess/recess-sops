@@ -36,10 +36,16 @@
   .slide {
     flex: 0 0 100vw; height: 100vh;
     scroll-snap-align: start;
-    padding: 36px 80px 90px;   /* symmetric — content is viewport-centered */
+    padding: 36px 80px 90px;
     display: flex; flex-direction: column;
-    justify-content: center; align-items: center; text-align: center;
+    justify-content: safe center;  /* center short slides, but allow overflowing slides to scroll from the top */
+    align-items: center;
+    text-align: center;
+    overflow-y: auto;              /* enable vertical scroll when content overflows */
   }
+  .slide::-webkit-scrollbar { width: 4px; }
+  .slide::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 2px; }
+  .slide::-webkit-scrollbar-track { background: transparent; }
   .slide > * { max-width: 720px; }
 
   /* hero */
