@@ -43,9 +43,10 @@
     text-align: center;
     overflow-y: auto;              /* enable vertical scroll when content overflows */
   }
-  .slide::-webkit-scrollbar { width: 4px; }
-  .slide::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 2px; }
-  .slide::-webkit-scrollbar-track { background: transparent; }
+  .slide::-webkit-scrollbar { width: 10px; }
+  .slide::-webkit-scrollbar-thumb { background: var(--teal); border-radius: 4px; }
+  .slide::-webkit-scrollbar-thumb:hover { background: var(--teal-dark); }
+  .slide::-webkit-scrollbar-track { background: #F1F5F9; }
   .slide > * { max-width: 720px; }
 
   /* hero */
@@ -1256,6 +1257,15 @@
     const reveal = document.getElementById('reveal-venue');
     if (reveal) reveal.classList.toggle('shown', type === 'Supplier - Venue');
     refreshGate(7);
+
+    // Auto-scroll the slide down so the newly-revealed template button + URL input
+    // are visible. Wait for the reveal CSS transition (400ms) to complete first.
+    if (type === 'Supplier - Venue') {
+      setTimeout(() => {
+        const slide = document.getElementById('slide-7');
+        if (slide) slide.scrollTo({ top: slide.scrollHeight, behavior: 'smooth' });
+      }, 450);
+    }
   }
 
   // Bill.com choice on Step 5
