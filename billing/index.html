@@ -847,37 +847,29 @@
   <section class="slide" id="slide-6">
     <span class="step-num">Step 6 — Critical</span>
     <h2>Three names. One entity that gets paid.</h2>
-    <p class="body">The form, the platform Supplier, and the platform Venue Display can show different names — they're tracked separately on purpose. The <strong>legal entity</strong> (from the form) is what gets paid in Bill.com.</p>
+    <p class="body">Three places, three names. The <strong>legal entity</strong> (from the form) is what gets paid in Bill.com. The platform tracks the umbrella + listing display separately.</p>
     <div class="match-row">
       <div class="match-side">
-        <div class="where">On the Form</div>
-        <div class="field">Organization Name</div>
-        <div class="sample">"Sara Mesa Fitness LLC"</div>
+        <div class="where">On the Vendor Form</div>
+        <div class="field">Organization Name <span style="opacity: 0.6; font-weight: 600;">(legal entity)</span></div>
+        <div class="sample">"Ian LLC"</div>
       </div>
       <div class="match-equals">→</div>
       <div class="match-side">
-        <div class="where">Platform · Supplier (umbrella)</div>
-        <div class="field">Organization Name Platform</div>
-        <div class="sample">"Crunch Fitness"</div>
+        <div class="where">On the Platform · Supplier</div>
+        <div class="field">Organization Name <span style="opacity: 0.6; font-weight: 600;">(umbrella)</span></div>
+        <div class="sample">"Ian's Trampoline Parks"</div>
       </div>
       <div class="match-equals">→</div>
       <div class="match-side">
-        <div class="where">Platform · Venue Display</div>
-        <div class="field">Title Pattern</div>
-        <div class="sample">"Crunch - Sara Mesa"</div>
-      </div>
-    </div>
-    <div style="margin-top: 26px; text-align: center;">
-      <div style="display:inline-block; background: var(--ink); color: white;
-                   padding: 14px 28px; border-radius: 4px;
-                   font-size: 15px; font-weight: 800;
-                   letter-spacing: 0.08em; text-transform: uppercase;">
-        ⬇ The legal entity is what gets paid (Col B → Bill.com)
+        <div class="where">On the Platform · Listing</div>
+        <div class="field">Title Pattern <span style="opacity: 0.6; font-weight: 600;">(display)</span></div>
+        <div class="sample">"Ian's Trampoline Parks - Ianville"</div>
       </div>
     </div>
     <div class="callout note" style="margin-top: 26px;">
-      ℹ️ <span class="label-bold">Why three?</span>
-      The legal entity ("Sara Mesa Fitness LLC") gets the check. But on the platform, this venue is grouped under an umbrella supplier ("Crunch Fitness") with a display name following the title-venue pattern ("Crunch - Sara Mesa"). Step 7 figures out which case you're in.
+      ℹ️ <span class="label-bold">Why three names?</span>
+      "Ian LLC" gets the check (legal entity, from the form). On the platform, this venue is grouped under "Ian's Trampoline Parks" (umbrella) and displayed as "Ian's Trampoline Parks - Ianville" (title-venue pattern). Step 7 figures out which case you're in.
     </div>
     <div class="continue-row">
       <button class="continue-btn" id="cont-6" onclick="unlockAndGo(7)">Got it — check Account Split Reference</button>
