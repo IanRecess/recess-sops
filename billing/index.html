@@ -1373,6 +1373,13 @@
   }
 
   async function submitToDrive() {
+    // Guard: only allow submit when user is actually on the Push slide (10).
+    // Prevents stray Enter / Tab+Enter from a different slide accidentally
+    // triggering the Push button via DOM tab order.
+    if (current() !== 10) {
+      console.warn('[Push] Ignored — user is on slide', current(), 'not Push (10)');
+      return;
+    }
     const status = document.getElementById('upload-status');
     const btn = document.getElementById('push-btn');
 
@@ -1505,6 +1512,13 @@
     document.querySelectorAll('.dot').forEach((d, idx) => {
       d.classList.toggle('active', idx === i);
       d.classList.toggle('future', idx > i);   /* future dots become non-interactive */
+    });
+    // Mark non-current slides as `inert` so Tab + Enter can't leak focus across
+    // slides (e.g. Tab from Step 9's URL input would otherwise focus the Push
+    // button on slide 10 and Enter would auto-submit).
+    document.querySelectorAll('.slide').forEach((s, idx) => {
+      if (idx === i) s.removeAttribute('inert');
+      else s.setAttribute('inert', '');
     });
     updateLockedDots();
     progText.textContent = LABELS[i] || ('Step ' + i);
