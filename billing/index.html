@@ -1513,6 +1513,13 @@
       d.classList.toggle('active', idx === i);
       d.classList.toggle('future', idx > i);   /* future dots become non-interactive */
     });
+    // Trap Tab focus inside the current slide so it can't leak to focusables
+    // on future slides (which would trigger browser scroll-into-view → auto-scroll).
+    document.querySelectorAll('.slide').forEach((s, idx) => {
+      s.querySelectorAll('input, button, a, textarea, select, [tabindex]').forEach(el => {
+        el.tabIndex = (idx === i) ? 0 : -1;
+      });
+    });
     updateLockedDots();
     progText.textContent = LABELS[i] || ('Step ' + i);
     navLeft.classList.toggle('disabled', i === 0);
