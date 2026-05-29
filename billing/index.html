@@ -757,14 +757,14 @@
   <section class="slide" id="slide-3">
     <span class="step-num">Step 3</span>
     <h2>Who is the supplier?</h2>
-    <p class="body">Type the <strong>Company Name</strong> exactly as it appears on the billing form. This goes into the sheet twice — and onto the Recess platform — all identically.</p>
+    <p class="body">Type the <strong>Organization Name</strong> exactly as it appears on the billing form. This goes into the sheet twice — and onto the Recess platform — all identically.</p>
     <div class="input-block">
-      <label class="input-label" for="input-supplier">Company name (from the billing form)</label>
+      <label class="input-label" for="input-supplier">Organization Name (from the billing form)</label>
       <input type="text" id="input-supplier" class="sop-input"
              placeholder="e.g. Forum Asset Management"
              oninput="saveField('supplier', this.value); markSaved('supplier-helper'); refreshGate(3);"/>
       <div class="input-helper" id="supplier-helper">
-        <span>Fills the "Supplier" (Col B) AND "Company Name from Vendor Form" (Col C) — identically</span>
+        <span>Fills "Organization Name" (Col B) AND "Organization Name from Vendor Form" (Col C) — identically</span>
         <span class="saved-tick">✓ saved</span>
       </div>
     </div>
@@ -788,7 +788,7 @@
     <div class="callout warn">
       ⚠️ <span class="label-bold">All 6 fields are non-negotiable:</span>
       <ul style="margin: 8px 0 0 20px;">
-        <li>Company Name</li>
+        <li>Organization Name</li>
         <li>Contact Name</li>
         <li>Contact Title</li>
         <li>Contact Email address</li>
@@ -847,17 +847,17 @@
   <section class="slide" id="slide-6">
     <span class="step-num">Step 6 — Critical</span>
     <h2>Same name in three places — exactly</h2>
-    <p class="body">The Supplier, the Organization Name, and the Company Name are <strong>all the same thing</strong>: the entity that gets paid. They must be identical across every system.</p>
+    <p class="body">The <strong>Organization Name</strong> appears in three places. They must be identical across every system — this is the entity that gets paid.</p>
     <div class="match-row">
       <div class="match-side">
         <div class="where">On the Billing Form</div>
-        <div class="field">Company Name</div>
+        <div class="field">Organization Name</div>
         <div class="sample">"Forum Asset Management"</div>
       </div>
       <div class="match-equals">=</div>
       <div class="match-side">
         <div class="where">On the Sheet</div>
-        <div class="field">Supplier</div>
+        <div class="field">Organization Name</div>
         <div class="sample">"Forum Asset Management"</div>
       </div>
       <div class="match-equals">=</div>
