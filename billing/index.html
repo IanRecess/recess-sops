@@ -1251,6 +1251,7 @@
 
   // Supplier-type choice — toggle card selection + show/hide venue notes
   function selectSupplierType(type) {
+    console.log('[selectSupplierType] called with:', type, '· reveal element:', document.getElementById('reveal-venue'));
     saveField('supplierType', type);
     document.getElementById('choice-supplier').classList.toggle('selected', type === 'Supplier');
     document.getElementById('choice-supplier-venue').classList.toggle('selected', type === 'Supplier - Venue');
