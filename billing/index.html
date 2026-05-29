@@ -1513,13 +1513,6 @@
       d.classList.toggle('active', idx === i);
       d.classList.toggle('future', idx > i);   /* future dots become non-interactive */
     });
-    // Mark non-current slides as `inert` so Tab + Enter can't leak focus across
-    // slides (e.g. Tab from Step 9's URL input would otherwise focus the Push
-    // button on slide 10 and Enter would auto-submit).
-    document.querySelectorAll('.slide').forEach((s, idx) => {
-      if (idx === i) s.removeAttribute('inert');
-      else s.setAttribute('inert', '');
-    });
     updateLockedDots();
     progText.textContent = LABELS[i] || ('Step ' + i);
     navLeft.classList.toggle('disabled', i === 0);
